@@ -18,7 +18,7 @@ const MenuCard = (props: MenuCardProps) => {
     onClick,
   } = props;
 
-  const renderMenu = () => {
+  const renderContent = () => {
     switch (variant) {
       case "menu":
         return (
@@ -59,7 +59,7 @@ const MenuCard = (props: MenuCardProps) => {
     }
   };
 
-  return renderMenu();
+  return renderContent();
 };
 
 export default React.memo(MenuCard);

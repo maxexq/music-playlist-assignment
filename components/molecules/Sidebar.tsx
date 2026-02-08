@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import MenuCard from "@/components/atoms/MenuCard";
+import PlaylistCover from "../atoms/PlaylistCover";
 
 interface Playlist {
   id: string;
@@ -31,6 +32,13 @@ interface SidebarProps {
   onShowLibrary: () => void;
   showingLibrary: boolean;
 }
+
+const mockCoverImages = [
+  "https://i.scdn.co/image/ab67616d0000aa54edf5b257be1d6593e81bb45f",
+  "https://i.scdn.co/image/ab67616d00001e029d28fd01859073a3ae6ea209",
+  "https://i.scdn.co/image/ab67616d0000e1a344cafd1b4f310efd08a8aa08",
+  // "https://i.scdn.co/image/ab67616d0000aa54edf5b257be1d6593e81bb45f",
+];
 
 export function Sidebar({
   playlists,
@@ -85,6 +93,8 @@ export function Sidebar({
       />
 
       <MenuCard title="Playlist" icon={Music} variant="menu" />
+
+      <PlaylistCover images={mockCoverImages} />
 
       <div className="flex-1 overflow-y-auto px-3">
         <div className="flex items-center justify-between px-3 mb-4">
