@@ -87,6 +87,7 @@ export type SongScalarFieldEnum = (typeof SongScalarFieldEnum)[keyof typeof Song
 export const PlaylistScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  description: 'description',
   createdAt: 'createdAt',
   isPublic: 'isPublic'
 } as const

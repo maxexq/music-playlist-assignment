@@ -15,7 +15,9 @@ import {
   createPlaylist,
   addSongToPlaylist,
   removeSongFromPlaylist,
+  updatePlaylist,
 } from "@/services/playlists";
+import EditPlaylistModal from "@/components/molecules/EditPlaylistModal";
 
 export default function Home() {
   const queryClient = useQueryClient();
@@ -25,6 +27,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showFindSongs, setShowFindSongs] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const { data: playlistsData = [], isLoading: loadingPlaylists } = useQuery({
     queryKey: ["playlists"],
@@ -58,6 +61,20 @@ export default function Home() {
   const removeSongMutation = useMutation({
     mutationFn: (songId: string) =>
       removeSongFromPlaylist(currentPlaylistId!, songId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["playlist", currentPlaylistId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["playlists"] });
+    },
+  });
+
+  const updatePlaylistMutation = useMutation({
+    mutationFn: (data: {
+      name: string;
+      description: string;
+      isPublic: boolean;
+    }) => updatePlaylist(currentPlaylistId!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["playlist", currentPlaylistId],
@@ -125,11 +142,32 @@ export default function Home() {
             <>
               <PlaylistHeader
                 name={currentPlaylist.name}
+                description={currentPlaylist.description ?? undefined}
                 coverImages={coverImages}
                 songCount={currentPlaylist.songs.length}
                 durationInMilliSeconds={totalDurationMs}
+                isPublic={currentPlaylist.isPublic}
                 onSearch={handleToggleSearch}
                 showSearch={showSearch}
+                onEditDetails={() => setShowEditModal(true)}
+                onTogglePublic={() =>
+                  updatePlaylistMutation.mutate({
+                    name: currentPlaylist.name,
+                    description: currentPlaylist.description ?? "",
+                    isPublic: !currentPlaylist.isPublic,
+                  })
+                }
+              />
+
+              <EditPlaylistModal
+                open={showEditModal}
+                onOpenChange={setShowEditModal}
+                name={currentPlaylist.name}
+                description={currentPlaylist.description ?? ""}
+                isPublic={currentPlaylist.isPublic}
+                onSave={(name, description, isPublic) =>
+                  updatePlaylistMutation.mutate({ name, description, isPublic })
+                }
               />
 
               {/* Search Bar */}

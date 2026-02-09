@@ -27,6 +27,7 @@ export type AggregatePlaylist = {
 export type PlaylistMinAggregateOutputType = {
   id: string | null
   name: string | null
+  description: string | null
   createdAt: Date | null
   isPublic: boolean | null
 }
@@ -34,6 +35,7 @@ export type PlaylistMinAggregateOutputType = {
 export type PlaylistMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  description: string | null
   createdAt: Date | null
   isPublic: boolean | null
 }
@@ -41,6 +43,7 @@ export type PlaylistMaxAggregateOutputType = {
 export type PlaylistCountAggregateOutputType = {
   id: number
   name: number
+  description: number
   createdAt: number
   isPublic: number
   _all: number
@@ -50,6 +53,7 @@ export type PlaylistCountAggregateOutputType = {
 export type PlaylistMinAggregateInputType = {
   id?: true
   name?: true
+  description?: true
   createdAt?: true
   isPublic?: true
 }
@@ -57,6 +61,7 @@ export type PlaylistMinAggregateInputType = {
 export type PlaylistMaxAggregateInputType = {
   id?: true
   name?: true
+  description?: true
   createdAt?: true
   isPublic?: true
 }
@@ -64,6 +69,7 @@ export type PlaylistMaxAggregateInputType = {
 export type PlaylistCountAggregateInputType = {
   id?: true
   name?: true
+  description?: true
   createdAt?: true
   isPublic?: true
   _all?: true
@@ -144,6 +150,7 @@ export type PlaylistGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type PlaylistGroupByOutputType = {
   id: string
   name: string
+  description: string | null
   createdAt: Date
   isPublic: boolean
   _count: PlaylistCountAggregateOutputType | null
@@ -172,6 +179,7 @@ export type PlaylistWhereInput = {
   NOT?: Prisma.PlaylistWhereInput | Prisma.PlaylistWhereInput[]
   id?: Prisma.StringFilter<"Playlist"> | string
   name?: Prisma.StringFilter<"Playlist"> | string
+  description?: Prisma.StringNullableFilter<"Playlist"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Playlist"> | Date | string
   isPublic?: Prisma.BoolFilter<"Playlist"> | boolean
   songs?: Prisma.PlaylistSongListRelationFilter
@@ -180,6 +188,7 @@ export type PlaylistWhereInput = {
 export type PlaylistOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
   songs?: Prisma.PlaylistSongOrderByRelationAggregateInput
@@ -191,6 +200,7 @@ export type PlaylistWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.PlaylistWhereInput[]
   NOT?: Prisma.PlaylistWhereInput | Prisma.PlaylistWhereInput[]
   name?: Prisma.StringFilter<"Playlist"> | string
+  description?: Prisma.StringNullableFilter<"Playlist"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Playlist"> | Date | string
   isPublic?: Prisma.BoolFilter<"Playlist"> | boolean
   songs?: Prisma.PlaylistSongListRelationFilter
@@ -199,6 +209,7 @@ export type PlaylistWhereUniqueInput = Prisma.AtLeast<{
 export type PlaylistOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
   _count?: Prisma.PlaylistCountOrderByAggregateInput
@@ -212,6 +223,7 @@ export type PlaylistScalarWhereWithAggregatesInput = {
   NOT?: Prisma.PlaylistScalarWhereWithAggregatesInput | Prisma.PlaylistScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Playlist"> | string
   name?: Prisma.StringWithAggregatesFilter<"Playlist"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"Playlist"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Playlist"> | Date | string
   isPublic?: Prisma.BoolWithAggregatesFilter<"Playlist"> | boolean
 }
@@ -219,6 +231,7 @@ export type PlaylistScalarWhereWithAggregatesInput = {
 export type PlaylistCreateInput = {
   id?: string
   name: string
+  description?: string | null
   createdAt?: Date | string
   isPublic?: boolean
   songs?: Prisma.PlaylistSongCreateNestedManyWithoutPlaylistInput
@@ -227,6 +240,7 @@ export type PlaylistCreateInput = {
 export type PlaylistUncheckedCreateInput = {
   id?: string
   name: string
+  description?: string | null
   createdAt?: Date | string
   isPublic?: boolean
   songs?: Prisma.PlaylistSongUncheckedCreateNestedManyWithoutPlaylistInput
@@ -235,6 +249,7 @@ export type PlaylistUncheckedCreateInput = {
 export type PlaylistUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   songs?: Prisma.PlaylistSongUpdateManyWithoutPlaylistNestedInput
@@ -243,6 +258,7 @@ export type PlaylistUpdateInput = {
 export type PlaylistUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   songs?: Prisma.PlaylistSongUncheckedUpdateManyWithoutPlaylistNestedInput
@@ -251,6 +267,7 @@ export type PlaylistUncheckedUpdateInput = {
 export type PlaylistCreateManyInput = {
   id?: string
   name: string
+  description?: string | null
   createdAt?: Date | string
   isPublic?: boolean
 }
@@ -258,6 +275,7 @@ export type PlaylistCreateManyInput = {
 export type PlaylistUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -265,6 +283,7 @@ export type PlaylistUpdateManyMutationInput = {
 export type PlaylistUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -272,6 +291,7 @@ export type PlaylistUncheckedUpdateManyInput = {
 export type PlaylistCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
 }
@@ -279,6 +299,7 @@ export type PlaylistCountOrderByAggregateInput = {
 export type PlaylistMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
 }
@@ -286,6 +307,7 @@ export type PlaylistMaxOrderByAggregateInput = {
 export type PlaylistMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
 }
@@ -320,6 +342,7 @@ export type PlaylistUpdateOneRequiredWithoutSongsNestedInput = {
 export type PlaylistCreateWithoutSongsInput = {
   id?: string
   name: string
+  description?: string | null
   createdAt?: Date | string
   isPublic?: boolean
 }
@@ -327,6 +350,7 @@ export type PlaylistCreateWithoutSongsInput = {
 export type PlaylistUncheckedCreateWithoutSongsInput = {
   id?: string
   name: string
+  description?: string | null
   createdAt?: Date | string
   isPublic?: boolean
 }
@@ -350,6 +374,7 @@ export type PlaylistUpdateToOneWithWhereWithoutSongsInput = {
 export type PlaylistUpdateWithoutSongsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -357,6 +382,7 @@ export type PlaylistUpdateWithoutSongsInput = {
 export type PlaylistUncheckedUpdateWithoutSongsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -395,6 +421,7 @@ export type PlaylistCountOutputTypeCountSongsArgs<ExtArgs extends runtime.Types.
 export type PlaylistSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  description?: boolean
   createdAt?: boolean
   isPublic?: boolean
   songs?: boolean | Prisma.Playlist$songsArgs<ExtArgs>
@@ -404,6 +431,7 @@ export type PlaylistSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type PlaylistSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  description?: boolean
   createdAt?: boolean
   isPublic?: boolean
 }, ExtArgs["result"]["playlist"]>
@@ -411,6 +439,7 @@ export type PlaylistSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type PlaylistSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  description?: boolean
   createdAt?: boolean
   isPublic?: boolean
 }, ExtArgs["result"]["playlist"]>
@@ -418,11 +447,12 @@ export type PlaylistSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type PlaylistSelectScalar = {
   id?: boolean
   name?: boolean
+  description?: boolean
   createdAt?: boolean
   isPublic?: boolean
 }
 
-export type PlaylistOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "isPublic", ExtArgs["result"]["playlist"]>
+export type PlaylistOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "createdAt" | "isPublic", ExtArgs["result"]["playlist"]>
 export type PlaylistInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   songs?: boolean | Prisma.Playlist$songsArgs<ExtArgs>
   _count?: boolean | Prisma.PlaylistCountOutputTypeDefaultArgs<ExtArgs>
@@ -438,6 +468,7 @@ export type $PlaylistPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    description: string | null
     createdAt: Date
     isPublic: boolean
   }, ExtArgs["result"]["playlist"]>
@@ -866,6 +897,7 @@ export interface Prisma__PlaylistClient<T, Null = never, ExtArgs extends runtime
 export interface PlaylistFieldRefs {
   readonly id: Prisma.FieldRef<"Playlist", 'String'>
   readonly name: Prisma.FieldRef<"Playlist", 'String'>
+  readonly description: Prisma.FieldRef<"Playlist", 'String'>
   readonly createdAt: Prisma.FieldRef<"Playlist", 'DateTime'>
   readonly isPublic: Prisma.FieldRef<"Playlist", 'Boolean'>
 }

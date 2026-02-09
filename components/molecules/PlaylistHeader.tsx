@@ -8,6 +8,7 @@ import {
   UserPlus,
   ListMusic,
   Search,
+  Lock,
 } from "lucide-react";
 import PlaylistCover from "@/components/atoms/PlaylistCover";
 import { Button } from "@/components/ui/button";
@@ -30,10 +31,13 @@ export interface PlaylistHeaderProps {
   coverImages?: string[];
   songCount: number;
   durationInMilliSeconds: number;
+  isPublic?: boolean;
   isLiked?: boolean;
   showSearch?: boolean;
   onDelete?: () => void;
   onSearch?: () => void;
+  onEditDetails?: () => void;
+  onTogglePublic?: () => void;
 }
 
 const PlaylistHeader = (props: PlaylistHeaderProps) => {
@@ -43,9 +47,12 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
     coverImages = [],
     songCount,
     durationInMilliSeconds,
+    isPublic = true,
     isLiked = false,
     onDelete,
     onSearch,
+    onEditDetails,
+    onTogglePublic,
     showSearch = false,
   } = props;
 
@@ -68,8 +75,15 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           priority
         />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-white uppercase">Playlist</p>
-          <h1 className="text-5xl font-bold text-white mt-2 mb-4">{name}</h1>
+          <p className="text-sm font-medium text-white uppercase">
+            {isPublic ? "Public Playlist" : "Private Playlist"}
+          </p>
+          <h1
+            className="text-5xl font-bold text-white mt-2 mb-4 cursor-pointer hover:underline decoration-2 underline-offset-4"
+            onClick={onEditDetails}
+          >
+            {name}
+          </h1>
           {description && (
             <p className="text-sm text-[#b3b3b3] mb-2 line-clamp-2">
               {description}
@@ -156,8 +170,18 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
               Add to queue
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-[#ffffff1a]" />
-            <DropdownMenuItem className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer">
+            <DropdownMenuItem
+              onClick={onEditDetails}
+              className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer"
+            >
               Edit details
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={onTogglePublic}
+              className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer"
+            >
+              <Lock className="size-4 mr-3" />
+              {isPublic ? "Make private" : "Make public"}
             </DropdownMenuItem>
             <DropdownMenuItem className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer">
               <UserPlus className="size-4 mr-3" />

@@ -18,9 +18,16 @@ export interface PlaylistSongEntry {
 export interface PlaylistDetail {
   id: string;
   name: string;
+  description: string | null;
   createdAt: string;
   isPublic: boolean;
   songs: PlaylistSongEntry[];
+}
+
+export interface UpdatePlaylistData {
+  name?: string;
+  description?: string;
+  isPublic?: boolean;
 }
 
 export async function fetchPlaylists(): Promise<PlaylistSummary[]> {
@@ -55,6 +62,19 @@ export async function addSongToPlaylist(
     body: JSON.stringify({ songId }),
   });
   if (!res.ok) throw new Error("Failed to add song to playlist");
+}
+
+export async function updatePlaylist(
+  id: string,
+  data: UpdatePlaylistData,
+): Promise<PlaylistDetail> {
+  const res = await fetch(`/api/playlists/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update playlist");
+  return res.json();
 }
 
 export async function removeSongFromPlaylist(

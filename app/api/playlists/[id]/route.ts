@@ -23,3 +23,22 @@ export async function GET(
 
   return NextResponse.json(playlist);
 }
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  const body = await request.json();
+
+  const playlist = await prisma.playlist.update({
+    where: { id },
+    data: {
+      ...(body.name !== undefined && { name: body.name }),
+      ...(body.description !== undefined && { description: body.description }),
+      ...(body.isPublic !== undefined && { isPublic: body.isPublic }),
+    },
+  });
+
+  return NextResponse.json(playlist);
+}

@@ -21,11 +21,12 @@ model Song {
 }
 
 model Playlist {
-  id        String         @id @default(uuid())
-  name      String
-  createdAt DateTime       @default(now())
-  isPublic  Boolean        @default(true)
-  songs     PlaylistSong[]
+  id          String         @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime       @default(now())
+  isPublic    Boolean        @default(true)
+  songs       PlaylistSong[]
 }
 
 model PlaylistSong {
