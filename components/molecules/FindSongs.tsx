@@ -13,7 +13,8 @@ interface FindSongsProps {
   onAddSong: (songId: string) => void;
 }
 
-const FindSongs = ({ onClose, onAddSong }: FindSongsProps) => {
+const FindSongs = (props: FindSongsProps) => {
+  const { onClose, onAddSong } = props;
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);

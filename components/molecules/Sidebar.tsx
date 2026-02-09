@@ -19,13 +19,14 @@ interface SidebarProps {
   loading?: boolean;
 }
 
-export function Sidebar({
-  playlists,
-  currentPlaylistId,
-  onSelectPlaylist,
-  onCreatePlaylist,
-  loading = false,
-}: SidebarProps) {
+export function Sidebar(props: SidebarProps) {
+  const {
+    playlists,
+    currentPlaylistId,
+    onSelectPlaylist,
+    onCreatePlaylist,
+    loading = false,
+  } = props;
   const menuItems: MenuItems[] = [
     {
       title: "Playlist",
