@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "setup": "bash scripts/setup.sh",
     "db:setup": "bash scripts/setup-db.sh",
     "db:migrate": "npx prisma migrate dev",
     "db:generate": "npx prisma generate",

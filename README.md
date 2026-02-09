@@ -44,63 +44,46 @@ A take-home project — a Spotify-inspired music playlist web application built 
 
 ## Getting Started
 
-### 1. Clone the repository
+### Quick Start (recommended)
 
 ```bash
 git clone <repository-url>
 cd music-playlist-assignment
-```
-
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Set up environment variables
-
-```bash
-cp .env.example .env
-```
-
-Default `.env`:
-
-```
-DATABASE_URL="postgresql://myuser:mypassword@localhost:5432/music_db"
-```
-
-### 4. Quick Setup (recommended)
-
-Run the full database setup in one command:
-
-```bash
-npm run db:setup
-```
-
-This will:
-1. Start the PostgreSQL Docker container
-2. Wait for the database to be ready
-3. Run Prisma migrations
-4. Generate the Prisma client
-5. Seed the database with 10 songs and 3 playlists
-
-### 5. Start the development server
-
-```bash
+npm run setup
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+`npm run setup` handles everything automatically:
+1. Installs dependencies (`npm install`)
+2. Copies `.env.example` to `.env` (skips if `.env` already exists)
+3. Starts the PostgreSQL Docker container
+4. Waits for the database to be ready
+5. Runs Prisma migrations
+6. Generates the Prisma client
+7. Seeds the database with 10 songs and 3 playlists
+
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Manual Setup (alternative)
 
 If you prefer to run each step individually:
 
 ```bash
+git clone <repository-url>
+cd music-playlist-assignment
+npm install                # Install dependencies
+cp .env.example .env       # Set up environment variables
 docker compose up -d       # Start PostgreSQL
 npm run db:migrate         # Run migrations
 npm run db:generate        # Generate Prisma client
 npm run db:seed            # Seed the database
+npm run dev                # Start development server
+```
+
+Default `.env`:
+
+```
+DATABASE_URL="postgresql://myuser:mypassword@localhost:5432/music_db"
 ```
 
 ## API Endpoints
