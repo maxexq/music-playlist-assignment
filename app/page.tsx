@@ -4,7 +4,7 @@ import { Sidebar } from "@/components/molecules/Sidebar";
 import PlaylistHeader from "@/components/molecules/PlaylistHeader";
 import PlaylistTable from "@/components/molecules/PlaylistTable";
 import FindSongs from "@/components/molecules/FindSongs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchPlaylists,
@@ -13,6 +13,7 @@ import {
   addSongToPlaylist,
   removeSongFromPlaylist,
   updatePlaylist,
+  deletePlaylist,
 } from "@/services/playlists";
 import EditPlaylistModal from "@/components/molecules/EditPlaylistModal";
 
@@ -30,6 +31,12 @@ export default function Home() {
     queryKey: ["playlists"],
     queryFn: fetchPlaylists,
   });
+
+  useEffect(() => {
+    if (!currentPlaylistId && playlistsData.length > 0) {
+      setCurrentPlaylistId(playlistsData[0].id);
+    }
+  }, [currentPlaylistId, playlistsData]);
 
   const { data: currentPlaylist, isLoading: loadingPlaylist } = useQuery({
     queryKey: ["playlist", currentPlaylistId],
@@ -76,6 +83,15 @@ export default function Home() {
       queryClient.invalidateQueries({
         queryKey: ["playlist", currentPlaylistId],
       });
+      queryClient.invalidateQueries({ queryKey: ["playlists"] });
+    },
+  });
+
+  const deletePlaylistMutation = useMutation({
+    mutationFn: () => deletePlaylist(currentPlaylistId!),
+    onSuccess: () => {
+      const remaining = playlistsData.filter((p) => p.id !== currentPlaylistId);
+      setCurrentPlaylistId(remaining.length > 0 ? remaining[0].id : null);
       queryClient.invalidateQueries({ queryKey: ["playlists"] });
     },
   });
@@ -158,6 +174,7 @@ export default function Home() {
                 showSearch={showSearch}
                 searchQuery={searchQuery}
                 onSearchQueryChange={setSearchQuery}
+                onDelete={() => deletePlaylistMutation.mutate()}
                 onEditDetails={() => setShowEditModal(true)}
                 onTogglePublic={() =>
                   updatePlaylistMutation.mutate({

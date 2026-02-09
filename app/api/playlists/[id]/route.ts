@@ -24,6 +24,17 @@ export async function GET(
   return NextResponse.json(playlist);
 }
 
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+
+  await prisma.playlist.delete({ where: { id } });
+
+  return NextResponse.json({ success: true });
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
