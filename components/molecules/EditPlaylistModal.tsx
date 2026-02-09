@@ -48,9 +48,9 @@ function EditPlaylistForm(props: EditPlaylistFormProps) {
         </Button>
       </div>
 
-      <div className="flex gap-4 mb-4">
-        <div className="size-45 shrink-0 rounded bg-[#3e3e3e] flex items-center justify-center shadow-lg">
-          <Music className="size-16 text-[#7f7f7f]" />
+      <div className="flex flex-col sm:flex-row gap-4 mb-4">
+        <div className="size-32 sm:size-45 shrink-0 rounded bg-[#3e3e3e] flex items-center justify-center shadow-lg self-center sm:self-start">
+          <Music className="size-10 sm:size-16 text-[#7f7f7f]" />
         </div>
 
         <div className="flex-1 flex flex-col gap-3">
@@ -76,10 +76,10 @@ function EditPlaylistForm(props: EditPlaylistFormProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
         <Button
           variant="outline"
-          className="rounded-full border-white/30 text-white bg-transparent hover:bg-transparent hover:border-white hover:scale-105 transition-all text-sm gap-2"
+          className="rounded-full border-white/30 text-white bg-transparent hover:bg-transparent hover:border-white hover:scale-105 transition-all text-sm gap-2 w-full sm:w-auto"
           onClick={() => setEditIsPublic(!editIsPublic)}
         >
           <Lock className="size-4" />
@@ -87,7 +87,7 @@ function EditPlaylistForm(props: EditPlaylistFormProps) {
         </Button>
 
         <Button
-          className="rounded-full bg-white text-black hover:bg-white/90 hover:scale-105 transition-all font-bold px-8"
+          className="rounded-full bg-white text-black hover:bg-white/90 hover:scale-105 transition-all font-bold px-8 w-full sm:w-auto"
           onClick={handleSave}
         >
           Save
@@ -101,7 +101,7 @@ const EditPlaylistModal = (props: EditPlaylistModalProps) => {
   const { open, onOpenChange, name, description, isPublic, onSave } = props;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#282828] border-none text-white max-w-131 p-6 gap-0 [&>button]:hidden">
+      <DialogContent className="bg-[#282828] border-none text-white max-w-[calc(100vw-2rem)] sm:max-w-131 p-4 sm:p-6 gap-0 [&>button]:hidden">
         {open && (
           <EditPlaylistForm
             key={`${name}-${description}-${isPublic}`}

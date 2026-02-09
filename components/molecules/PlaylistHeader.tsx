@@ -11,6 +11,7 @@ import {
   Lock,
   Pen,
   CircleMinus,
+  X,
 } from "lucide-react";
 import PlaylistCover from "@/components/atoms/PlaylistCover";
 import { Button } from "@/components/ui/button";
@@ -81,31 +82,37 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-end gap-6 mb-6">
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 mb-6">
         <PlaylistCover
           images={coverImages}
           size={192}
-          className="shadow-2xl"
+          className="shadow-2xl hidden sm:block"
           priority
         />
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-white uppercase">
+        <PlaylistCover
+          images={coverImages}
+          size={128}
+          className="shadow-2xl sm:hidden"
+          priority
+        />
+        <div className="flex-1 min-w-0 text-center sm:text-left w-full">
+          <p className="text-xs sm:text-sm font-medium text-white uppercase">
             {isPublic ? "Public Playlist" : "Private Playlist"}
           </p>
           <h1
-            className="text-5xl font-bold text-white mt-2 mb-4 cursor-pointer hover:underline decoration-2 underline-offset-4"
+            className="text-2xl sm:text-5xl font-bold text-white mt-1 sm:mt-2 mb-2 sm:mb-4 cursor-pointer hover:underline decoration-2 underline-offset-4"
             onClick={onEditDetails}
           >
             {name}
           </h1>
           {description && (
-            <p className="text-sm text-[#b3b3b3] mb-2 line-clamp-2">
+            <p className="text-xs sm:text-sm text-[#b3b3b3] mb-2 line-clamp-2">
               {description}
             </p>
           )}
           {songCount > 0 && (
-            <p className="text-sm text-[#b3b3b3]">
+            <p className="text-xs sm:text-sm text-[#b3b3b3]">
               <span>
                 {songCount} song{songCount === 1 ? "" : "s"}
               </span>
@@ -119,11 +126,40 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      {/* Mobile: full-width search when open */}
+      {showSearch && (
+        <div className="flex md:hidden items-center gap-2 mb-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#b3b3b3]" />
+            <Input
+              ref={searchInputRef}
+              value={searchQuery}
+              onChange={(e) => onSearchQueryChange?.(e.target.value)}
+              onBlur={() => {
+                if (!searchQuery) onSearch?.();
+              }}
+              placeholder="Search in playlist"
+              className="pl-9 pr-3 w-full h-9 bg-[#2a2a2a] border-none text-white text-sm placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white/50 rounded"
+            />
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 shrink-0 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
+            onClick={onSearch}
+          >
+            <X className="size-4" />
+          </Button>
+        </div>
+      )}
+
+      <div
+        className={`flex items-center gap-2 sm:gap-4 ${showSearch ? "hidden md:flex" : ""}`}
+      >
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button className="size-14 rounded-full bg-[#1db954] hover:bg-[#1ed760] hover:scale-105 transition-all">
-              <Play className="size-6 fill-black text-black ml-1" />
+            <Button className="size-10 sm:size-14 rounded-full bg-[#1db954] hover:bg-[#1ed760] hover:scale-105 transition-all">
+              <Play className="size-5 sm:size-6 fill-black text-black ml-0.5 sm:ml-1" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Play</TooltipContent>
@@ -133,9 +169,9 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
-              className="size-12 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
+              className="size-10 sm:size-12 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
             >
-              <Shuffle className="size-6" />
+              <Shuffle className="size-5 sm:size-6" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Shuffle</TooltipContent>
@@ -145,7 +181,7 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
-              className={`size-12 rounded-full hover:bg-transparent ${
+              className={`hidden sm:flex size-12 rounded-full hover:bg-transparent ${
                 isLiked ? "text-[#1db954]" : "text-[#b3b3b3] hover:text-white"
               }`}
             >
@@ -159,7 +195,7 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
-              className="size-12 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
+              className="hidden sm:flex size-12 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
             >
               <Download className="size-6" />
             </Button>
@@ -171,9 +207,9 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="size-12 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
+              className="size-10 sm:size-12 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
             >
-              <MoreHorizontal className="size-6" />
+              <MoreHorizontal className="size-5 sm:size-6" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -210,7 +246,7 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="ml-auto flex items-center">
+        <div className="ml-auto hidden md:flex items-center">
           <div
             className="relative overflow-hidden transition-all duration-200 ease-in-out"
             style={{ width: showSearch ? 192 : 0, opacity: showSearch ? 1 : 0 }}
@@ -218,7 +254,6 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#b3b3b3]" />
               <Input
-                ref={searchInputRef}
                 value={searchQuery}
                 onChange={(e) => onSearchQueryChange?.(e.target.value)}
                 onBlur={() => {
@@ -244,6 +279,19 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
             </Tooltip>
           )}
         </div>
+
+        {/* Mobile search icon */}
+        {!showSearch && (
+          <div className="ml-auto md:hidden">
+            <Button
+              onClick={onSearch}
+              variant="ghost"
+              className="size-10 rounded-full hover:bg-transparent text-[#b3b3b3] hover:text-white"
+            >
+              <Search className="size-5" />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

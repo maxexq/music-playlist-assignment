@@ -37,10 +37,9 @@ const FindSongs = (props: FindSongsProps) => {
   });
 
   return (
-    <div className="px-6 py-6 border-t border-[#ffffff1a]">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-2xl font-bold text-white">
+    <div className="px-3 sm:px-6 py-4 sm:py-6 border-t border-[#ffffff1a]">
+      <div className="flex items-center justify-between mb-4 sm:mb-5 gap-2">
+        <h2 className="text-lg sm:text-2xl font-bold text-white">
           Let&apos;s find something for your playlist
         </h2>
         <Button
@@ -53,15 +52,14 @@ const FindSongs = (props: FindSongsProps) => {
         </Button>
       </div>
 
-      {/* Search Input */}
-      <div className="relative max-w-sm mb-5">
+      <div className="relative max-w-full sm:max-w-sm mb-4 sm:mb-5">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#b3b3b3]" />
         <Input
           ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for songs or episodes"
-          className="pl-10 pr-10 bg-[#2a2a2a] border-none text-white text-sm placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white h-10 rounded-full"
+          className="pl-10 pr-10 bg-[#2a2a2a] border-none text-white text-sm placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white h-10 rounded-2xl"
         />
         {query && (
           <Button
@@ -75,7 +73,6 @@ const FindSongs = (props: FindSongsProps) => {
         )}
       </div>
 
-      {/* Results */}
       {isLoading && (
         <div className="py-4 text-[#b3b3b3] text-sm">Searching...</div>
       )}
@@ -87,7 +84,6 @@ const FindSongs = (props: FindSongsProps) => {
               key={song.id}
               className="flex items-center justify-between py-2 px-2 rounded-md hover:bg-[#ffffff1a] group"
             >
-              {/* Left: Cover + Title/Artist */}
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="relative size-10 rounded overflow-hidden shrink-0 bg-[#282828]">
                   {song.coverUrl ? (
@@ -110,7 +106,6 @@ const FindSongs = (props: FindSongsProps) => {
                 </div>
               </div>
 
-              {/* Middle: Album */}
               <div className="flex-1 min-w-0 px-4 hidden md:block">
                 {song.album && (
                   <span className="text-sm text-[#b3b3b3] truncate">
@@ -119,7 +114,6 @@ const FindSongs = (props: FindSongsProps) => {
                 )}
               </div>
 
-              {/* Right: Add Button */}
               <Button
                 variant="outline"
                 size="sm"

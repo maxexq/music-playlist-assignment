@@ -38,7 +38,7 @@ export function Sidebar(props: SidebarProps) {
 
   return (
     <nav>
-      <div className="w-[320px] bg-[#121212] flex flex-1 flex-col h-screen rounded-lg overflow-hidden relative">
+      <div className="w-[280px] sm:w-[320px] bg-[#121212] flex flex-1 flex-col h-screen rounded-lg overflow-hidden relative">
         <div className="sticky top-0 z-10 bg-[#121212]">
           <SidebarHeader menuItems={menuItems} />
         </div>

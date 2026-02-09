@@ -4,8 +4,10 @@ import { Sidebar } from "@/components/molecules/Sidebar";
 import PlaylistHeader from "@/components/molecules/PlaylistHeader";
 import PlaylistTable from "@/components/molecules/PlaylistTable";
 import FindSongs from "@/components/molecules/FindSongs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   fetchPlaylists,
   fetchPlaylist,
@@ -26,6 +28,12 @@ export default function Home() {
   const [showSearch, setShowSearch] = useState(false);
   const [showFindSongs, setShowFindSongs] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  const handleSelectPlaylist = useCallback((id: string) => {
+    setCurrentPlaylistId(id);
+    setShowSidebar(false);
+  }, []);
 
   const { data: playlistsData = [], isLoading: loadingPlaylists } = useQuery({
     queryKey: ["playlists"],
@@ -143,19 +151,48 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-black">
-      <Sidebar
-        playlists={sidebarPlaylists}
-        currentPlaylistId={currentPlaylistId}
-        onSelectPlaylist={setCurrentPlaylistId}
-        onCreatePlaylist={() =>
-          createPlaylistMutation.mutate(
-            `My Playlist #${playlistsData.length + 1}`,
-          )
-        }
-        loading={loadingPlaylists}
-      />
+      {/* Mobile sidebar overlay */}
+      {showSidebar && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          onClick={() => setShowSidebar(false)}
+        />
+      )}
+
+      <div
+        className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 ${
+          showSidebar ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <Sidebar
+          playlists={sidebarPlaylists}
+          currentPlaylistId={currentPlaylistId}
+          onSelectPlaylist={handleSelectPlaylist}
+          onCreatePlaylist={() =>
+            createPlaylistMutation.mutate(
+              `My Playlist #${playlistsData.length + 1}`,
+            )
+          }
+          loading={loadingPlaylists}
+        />
+      </div>
 
       <main className="flex-1 overflow-y-auto bg-linear-to-b from-[#535353] to-[#121212]">
+        <div className="sticky top-0 z-30 flex items-center gap-3 px-4 py-3 md:hidden bg-[#535353]/90 backdrop-blur-sm">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 rounded-full bg-black/40 text-white hover:bg-black/60"
+            onClick={() => setShowSidebar(true)}
+          >
+            <Menu className="size-5" />
+          </Button>
+          {currentPlaylist && (
+            <h2 className="text-sm font-bold text-white truncate">
+              {currentPlaylist.name}
+            </h2>
+          )}
+        </div>
         {currentPlaylistId ? (
           loadingPlaylist ? (
             <div className="flex items-center justify-center h-full">
@@ -202,21 +239,12 @@ export default function Home() {
                   id: p.id,
                   name: p.name,
                 }))}
-                onPlaySong={() => {}}
-                onPauseSong={() => {}}
-                onLikeSong={() => {}}
-                onUnlikeSong={() => {}}
-                onAddToQueue={() => {}}
                 onAddToPlaylist={(songId, playlistId) =>
                   addSongToPlaylist(playlistId, songId)
                 }
                 onRemoveFromPlaylist={(songId) =>
                   removeSongMutation.mutate(songId)
                 }
-                onGoToArtist={() => {}}
-                onGoToAlbum={() => {}}
-                onStartRadio={() => {}}
-                onShare={() => {}}
               />
 
               {showFindSongs ? (
@@ -225,7 +253,7 @@ export default function Home() {
                   onAddSong={(songId) => addSongMutation.mutate(songId)}
                 />
               ) : (
-                <div className="flex justify-end px-6 py-6">
+                <div className="flex justify-end px-3 sm:px-6 py-4 sm:py-6">
                   <button
                     className="text-sm font-bold text-white transition-colors cursor-pointer"
                     onClick={() => setShowFindSongs(true)}
