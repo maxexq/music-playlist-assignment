@@ -26,20 +26,17 @@ export default function Home() {
   const [showSearch, setShowSearch] = useState(false);
   const [showFindSongs, setShowFindSongs] = useState(false);
 
-  // Fetch all playlists for sidebar
   const { data: playlistsData = [], isLoading: loadingPlaylists } = useQuery({
     queryKey: ["playlists"],
     queryFn: fetchPlaylists,
   });
 
-  // Fetch selected playlist with songs
-  const { data: currentPlaylist } = useQuery({
+  const { data: currentPlaylist, isLoading: loadingPlaylist } = useQuery({
     queryKey: ["playlist", currentPlaylistId],
     queryFn: () => fetchPlaylist(currentPlaylistId!),
     enabled: !!currentPlaylistId,
   });
 
-  // Create playlist mutation
   const createPlaylistMutation = useMutation({
     mutationFn: (name: string) => createPlaylist(name),
     onSuccess: () => {
@@ -47,7 +44,6 @@ export default function Home() {
     },
   });
 
-  // Add song to playlist mutation
   const addSongMutation = useMutation({
     mutationFn: (songId: string) =>
       addSongToPlaylist(currentPlaylistId!, songId),
@@ -59,7 +55,6 @@ export default function Home() {
     },
   });
 
-  // Remove song from playlist mutation
   const removeSongMutation = useMutation({
     mutationFn: (songId: string) =>
       removeSongFromPlaylist(currentPlaylistId!, songId),
@@ -78,7 +73,6 @@ export default function Home() {
     }
   };
 
-  // Map API playlists to Sidebar format
   const sidebarPlaylists = playlistsData.map((p) => ({
     id: p.id,
     name: p.name,
@@ -87,25 +81,23 @@ export default function Home() {
     songIds: Array(p._count.songs).fill(""),
   }));
 
-  // Map songs for PlaylistTable (duration in seconds)
-  const tableSongs = (currentPlaylist?.songs ?? []).map((s) => ({
-    id: s.id,
-    title: s.title,
-    artist: s.artist,
-    album: s.album ?? "",
-    duration: Math.floor(s.durationMs / 1000),
-    coverUrl: s.coverUrl ?? "",
+  const tableSongs = (currentPlaylist?.songs ?? []).map((entry) => ({
+    id: entry.song.id,
+    title: entry.song.title,
+    artist: entry.song.artist,
+    album: entry.song.album ?? "",
+    duration: Math.floor(entry.song.durationMs / 1000),
+    coverUrl: entry.song.coverUrl ?? "",
+    dateAdded: entry.dateAdded,
   }));
 
-  // Cover images from songs
   const coverImages = (currentPlaylist?.songs ?? [])
-    .map((s) => s.coverUrl)
+    .map((entry) => entry.song.coverUrl)
     .filter((url): url is string => !!url)
     .slice(0, 4);
 
-  // Total duration in ms
   const totalDurationMs = (currentPlaylist?.songs ?? []).reduce(
-    (sum, s) => sum + s.durationMs,
+    (sum, entry) => sum + entry.song.durationMs,
     0,
   );
 
@@ -120,82 +112,87 @@ export default function Home() {
       />
 
       <main className="flex-1 overflow-y-auto bg-linear-to-b from-[#535353] to-[#121212]">
-        {currentPlaylist ? (
-          <>
-            <PlaylistHeader
-              name={currentPlaylist.name}
-              coverImages={coverImages}
-              songCount={currentPlaylist.songs.length}
-              durationInMilliSeconds={totalDurationMs}
-              onSearch={handleToggleSearch}
-              showSearch={showSearch}
-            />
-
-            {/* Search Bar */}
-            {showSearch && (
-              <div className="px-6 mb-4">
-                <div className="relative max-w-xs">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#b3b3b3]" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search in playlist"
-                    className="pl-10 pr-10 bg-[#ffffff1a] border-none text-white placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white"
-                  />
-                  {searchQuery && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 size-6 hover:bg-transparent text-[#b3b3b3] hover:text-white"
-                      onClick={() => setSearchQuery("")}
-                    >
-                      <X className="size-4" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <PlaylistTable
-              songs={tableSongs}
-              playlists={playlistsData.map((p) => ({
-                id: p.id,
-                name: p.name,
-              }))}
-              onPlaySong={() => {}}
-              onPauseSong={() => {}}
-              onLikeSong={() => {}}
-              onUnlikeSong={() => {}}
-              onAddToQueue={() => {}}
-              onAddToPlaylist={(songId, playlistId) =>
-                addSongToPlaylist(playlistId, songId)
-              }
-              onRemoveFromPlaylist={(songId) =>
-                removeSongMutation.mutate(songId)
-              }
-              onGoToArtist={() => {}}
-              onGoToAlbum={() => {}}
-              onStartRadio={() => {}}
-              onShare={() => {}}
-            />
-
-            {/* Find more button / Find Songs section */}
-            {showFindSongs ? (
-              <FindSongs
-                onClose={() => setShowFindSongs(false)}
-                onAddSong={(songId) => addSongMutation.mutate(songId)}
+        {currentPlaylistId ? (
+          loadingPlaylist ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
+            </div>
+          ) : currentPlaylist ? (
+            <>
+              <PlaylistHeader
+                name={currentPlaylist.name}
+                coverImages={coverImages}
+                songCount={currentPlaylist.songs.length}
+                durationInMilliSeconds={totalDurationMs}
+                onSearch={handleToggleSearch}
+                showSearch={showSearch}
               />
-            ) : (
-              <div className="px-6 py-6">
-                <button
-                  className="text-sm font-bold text-[#b3b3b3] hover:text-white transition-colors cursor-pointer"
-                  onClick={() => setShowFindSongs(true)}
-                >
-                  Find more
-                </button>
-              </div>
-            )}
-          </>
+
+              {/* Search Bar */}
+              {showSearch && (
+                <div className="px-6 mb-4">
+                  <div className="relative max-w-xs">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#b3b3b3]" />
+                    <Input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search in playlist"
+                      className="pl-10 pr-10 bg-[#ffffff1a] border-none text-white placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white"
+                    />
+                    {searchQuery && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 size-6 hover:bg-transparent text-[#b3b3b3] hover:text-white"
+                        onClick={() => setSearchQuery("")}
+                      >
+                        <X className="size-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <PlaylistTable
+                songs={tableSongs}
+                playlists={playlistsData.map((p) => ({
+                  id: p.id,
+                  name: p.name,
+                }))}
+                onPlaySong={() => {}}
+                onPauseSong={() => {}}
+                onLikeSong={() => {}}
+                onUnlikeSong={() => {}}
+                onAddToQueue={() => {}}
+                onAddToPlaylist={(songId, playlistId) =>
+                  addSongToPlaylist(playlistId, songId)
+                }
+                onRemoveFromPlaylist={(songId) =>
+                  removeSongMutation.mutate(songId)
+                }
+                onGoToArtist={() => {}}
+                onGoToAlbum={() => {}}
+                onStartRadio={() => {}}
+                onShare={() => {}}
+              />
+
+              {showFindSongs ? (
+                <FindSongs
+                  onClose={() => setShowFindSongs(false)}
+                  onAddSong={(songId) => addSongMutation.mutate(songId)}
+                />
+              ) : (
+                <div className="flex justify-end px-6 py-6">
+                  <button
+                    className="text-sm font-bold text-white transition-colors cursor-pointer"
+                    onClick={() => setShowFindSongs(true)}
+                  >
+                    Find more
+                  </button>
+                </div>
+              )}
+            </>
+          ) : null
         ) : (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">

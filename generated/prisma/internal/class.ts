@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.3.0",
   "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
-  "inlineSchema": "datasource db {\n  provider = \"postgresql\"\n}\n\ngenerator client {\n  provider   = \"prisma-client\"\n  output     = \"../generated/prisma\"\n  engineType = \"client\"\n}\n\nmodel Song {\n  id         String     @id @default(uuid())\n  title      String\n  artist     String\n  album      String?\n  durationMs Int\n  playlists  Playlist[]\n  coverUrl   String?\n\n  @@index([title])\n}\n\nmodel Playlist {\n  id        String   @id @default(uuid())\n  name      String\n  createdAt DateTime @default(now())\n  songs     Song[]\n  isPublic  Boolean  @default(true)\n}\n",
+  "inlineSchema": "datasource db {\n  provider = \"postgresql\"\n}\n\ngenerator client {\n  provider   = \"prisma-client\"\n  output     = \"../generated/prisma\"\n  engineType = \"client\"\n}\n\nmodel Song {\n  id         String         @id @default(uuid())\n  title      String\n  artist     String\n  album      String?\n  durationMs Int\n  coverUrl   String?\n  playlists  PlaylistSong[]\n\n  @@index([title])\n}\n\nmodel Playlist {\n  id        String         @id @default(uuid())\n  name      String\n  createdAt DateTime       @default(now())\n  isPublic  Boolean        @default(true)\n  songs     PlaylistSong[]\n}\n\nmodel PlaylistSong {\n  playlistId String\n  songId     String\n  dateAdded  DateTime @default(now())\n  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)\n  song       Song     @relation(fields: [songId], references: [id], onDelete: Cascade)\n\n  @@id([playlistId, songId])\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Song\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"artist\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"album\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"durationMs\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"playlists\",\"kind\":\"object\",\"type\":\"Playlist\",\"relationName\":\"PlaylistToSong\"},{\"name\":\"coverUrl\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"Playlist\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"songs\",\"kind\":\"object\",\"type\":\"Song\",\"relationName\":\"PlaylistToSong\"},{\"name\":\"isPublic\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Song\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"artist\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"album\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"durationMs\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"coverUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"playlists\",\"kind\":\"object\",\"type\":\"PlaylistSong\",\"relationName\":\"PlaylistSongToSong\"}],\"dbName\":null},\"Playlist\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isPublic\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"songs\",\"kind\":\"object\",\"type\":\"PlaylistSong\",\"relationName\":\"PlaylistToPlaylistSong\"}],\"dbName\":null},\"PlaylistSong\":{\"fields\":[{\"name\":\"playlistId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"songId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateAdded\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"playlist\",\"kind\":\"object\",\"type\":\"Playlist\",\"relationName\":\"PlaylistToPlaylistSong\"},{\"name\":\"song\",\"kind\":\"object\",\"type\":\"Song\",\"relationName\":\"PlaylistSongToSong\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -195,6 +195,16 @@ export interface PrismaClient<
     * ```
     */
   get playlist(): Prisma.PlaylistDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.playlistSong`: Exposes CRUD operations for the **PlaylistSong** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PlaylistSongs
+    * const playlistSongs = await prisma.playlistSong.findMany()
+    * ```
+    */
+  get playlistSong(): Prisma.PlaylistSongDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

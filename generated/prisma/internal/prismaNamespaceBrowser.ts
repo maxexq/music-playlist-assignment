@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Song: 'Song',
-  Playlist: 'Playlist'
+  Playlist: 'Playlist',
+  PlaylistSong: 'PlaylistSong'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -91,6 +92,15 @@ export const PlaylistScalarFieldEnum = {
 } as const
 
 export type PlaylistScalarFieldEnum = (typeof PlaylistScalarFieldEnum)[keyof typeof PlaylistScalarFieldEnum]
+
+
+export const PlaylistSongScalarFieldEnum = {
+  playlistId: 'playlistId',
+  songId: 'songId',
+  dateAdded: 'dateAdded'
+} as const
+
+export type PlaylistSongScalarFieldEnum = (typeof PlaylistSongScalarFieldEnum)[keyof typeof PlaylistSongScalarFieldEnum]
 
 
 export const SortOrder = {

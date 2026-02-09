@@ -3,36 +3,31 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id: playlistId } = await params;
   const { songId } = await request.json();
-  const playlistId = params.id;
 
-  const updatedPlaylist = await prisma.playlist.update({
-    where: { id: playlistId },
+  const playlistSong = await prisma.playlistSong.create({
     data: {
-      songs: {
-        connect: { id: songId },
-      },
+      playlistId,
+      songId,
     },
   });
 
-  return NextResponse.json(updatedPlaylist);
+  return NextResponse.json(playlistSong);
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id: playlistId } = await params;
   const { songId } = await request.json();
-  const playlistId = params.id;
 
-  await prisma.playlist.update({
-    where: { id: playlistId },
-    data: {
-      songs: {
-        disconnect: { id: songId },
-      },
+  await prisma.playlistSong.delete({
+    where: {
+      playlistId_songId: { playlistId, songId },
     },
   });
 

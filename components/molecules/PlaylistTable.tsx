@@ -31,6 +31,7 @@ export interface Song {
   album: string;
   duration: number;
   coverUrl: string;
+  dateAdded: string;
 }
 
 export interface Playlist {
@@ -63,6 +64,15 @@ const formatDuration = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
+const formatDateAdded = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
 const PlaylistTable = (props: PlaylistTableProps) => {
   const {
     songs,
@@ -88,10 +98,11 @@ const PlaylistTable = (props: PlaylistTableProps) => {
   return (
     <div className="px-6">
       {/* Table Header */}
-      <div className="grid grid-cols-[16px_4fr_3fr_minmax(120px,1fr)] gap-4 px-4 py-2 border-b border-[#ffffff1a] text-[#b3b3b3] text-sm">
+      <div className="grid grid-cols-[16px_4fr_3fr_2fr_minmax(120px,1fr)] gap-4 px-4 py-2 border-b border-[#ffffff1a] text-[#b3b3b3] text-sm">
         <span className="text-center">#</span>
         <span>Title</span>
         <span>Album</span>
+        <span>Date added</span>
         <span className="flex justify-end">
           <Clock className="size-4" />
         </span>
@@ -107,7 +118,7 @@ const PlaylistTable = (props: PlaylistTableProps) => {
           return (
             <div
               key={song.id}
-              className={`grid grid-cols-[16px_4fr_3fr_minmax(120px,1fr)] gap-4 px-4 py-2 rounded-md group transition-colors ${
+              className={`grid grid-cols-[16px_4fr_3fr_2fr_minmax(120px,1fr)] gap-4 px-4 py-2 rounded-md group transition-colors ${
                 isHovered ? "bg-[#ffffff1a]" : ""
               }`}
               onMouseEnter={() => setHoveredRow(song.id)}
@@ -186,6 +197,13 @@ const PlaylistTable = (props: PlaylistTableProps) => {
                   onClick={() => onGoToAlbum(song.album)}
                 >
                   {song.album}
+                </span>
+              </div>
+
+              {/* Date Added */}
+              <div className="flex items-center min-w-0">
+                <span className="text-sm text-[#b3b3b3]">
+                  {formatDateAdded(song.dateAdded)}
                 </span>
               </div>
 
@@ -283,7 +301,9 @@ const PlaylistTable = (props: PlaylistTableProps) => {
                       className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer"
                     >
                       <Heart className="size-4 mr-3" />
-                      {isLiked ? "Remove from Liked Songs" : "Save to Liked Songs"}
+                      {isLiked
+                        ? "Remove from Liked Songs"
+                        : "Save to Liked Songs"}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => onShare(song.id)}

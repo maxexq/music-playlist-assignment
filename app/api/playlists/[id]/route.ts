@@ -3,11 +3,18 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
+
   const playlist = await prisma.playlist.findUnique({
-    where: { id: params.id },
-    include: { songs: true },
+    where: { id },
+    include: {
+      songs: {
+        include: { song: true },
+        orderBy: { dateAdded: "desc" },
+      },
+    },
   });
 
   if (!playlist) {

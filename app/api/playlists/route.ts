@@ -10,8 +10,25 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  const playlists = await prisma.playlist.findMany({
-    include: { _count: { select: { songs: true } } },
-  });
-  return NextResponse.json(playlists);
+  try {
+    const playlists = await prisma.playlist.findMany({
+      include: {
+        songs: {
+          include: { song: true },
+        },
+      },
+    });
+
+    const result = playlists.map((p) => ({
+      id: p.id,
+      name: p.name,
+      createdAt: p.createdAt,
+      isPublic: p.isPublic,
+      _count: { songs: p.songs.length },
+    }));
+
+    return NextResponse.json(result);
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
 }

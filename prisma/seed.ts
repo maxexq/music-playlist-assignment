@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 async function main() {
+  await prisma.playlistSong.deleteMany();
   await prisma.playlist.deleteMany();
   await prisma.song.deleteMany();
 
@@ -112,7 +113,7 @@ async function main() {
       name: "Top Hits",
       isPublic: true,
       songs: {
-        connect: songs.slice(0, 5).map((s) => ({ id: s.id })),
+        create: songs.slice(0, 5).map((s) => ({ songId: s.id })),
       },
     },
   });
@@ -122,8 +123,8 @@ async function main() {
       name: "Chill Vibes",
       isPublic: true,
       songs: {
-        connect: [songs[3], songs[4], songs[7], songs[9]].map((s) => ({
-          id: s.id,
+        create: [songs[3], songs[4], songs[7], songs[9]].map((s) => ({
+          songId: s.id,
         })),
       },
     },
@@ -134,9 +135,9 @@ async function main() {
       name: "Party Mix",
       isPublic: false,
       songs: {
-        connect: [songs[0], songs[2], songs[5], songs[6], songs[8]].map(
-          (s) => ({ id: s.id }),
-        ),
+        create: [songs[0], songs[2], songs[5], songs[6], songs[8]].map((s) => ({
+          songId: s.id,
+        })),
       },
     },
   });

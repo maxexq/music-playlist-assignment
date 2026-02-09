@@ -8,12 +8,19 @@ export interface PlaylistSummary {
   _count: { songs: number };
 }
 
+export interface PlaylistSongEntry {
+  songId: string;
+  playlistId: string;
+  dateAdded: string;
+  song: SearchResult;
+}
+
 export interface PlaylistDetail {
   id: string;
   name: string;
   createdAt: string;
   isPublic: boolean;
-  songs: SearchResult[];
+  songs: PlaylistSongEntry[];
 }
 
 export async function fetchPlaylists(): Promise<PlaylistSummary[]> {

@@ -385,7 +385,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Song: 'Song',
-  Playlist: 'Playlist'
+  Playlist: 'Playlist',
+  PlaylistSong: 'PlaylistSong'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "song" | "playlist"
+    modelProps: "song" | "playlist" | "playlistSong"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -553,6 +554,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PlaylistSong: {
+      payload: Prisma.$PlaylistSongPayload<ExtArgs>
+      fields: Prisma.PlaylistSongFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PlaylistSongFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PlaylistSongFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>
+        }
+        findFirst: {
+          args: Prisma.PlaylistSongFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PlaylistSongFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>
+        }
+        findMany: {
+          args: Prisma.PlaylistSongFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>[]
+        }
+        create: {
+          args: Prisma.PlaylistSongCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>
+        }
+        createMany: {
+          args: Prisma.PlaylistSongCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PlaylistSongCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>[]
+        }
+        delete: {
+          args: Prisma.PlaylistSongDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>
+        }
+        update: {
+          args: Prisma.PlaylistSongUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>
+        }
+        deleteMany: {
+          args: Prisma.PlaylistSongDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PlaylistSongUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PlaylistSongUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>[]
+        }
+        upsert: {
+          args: Prisma.PlaylistSongUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistSongPayload>
+        }
+        aggregate: {
+          args: Prisma.PlaylistSongAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePlaylistSong>
+        }
+        groupBy: {
+          args: Prisma.PlaylistSongGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlaylistSongGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PlaylistSongCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlaylistSongCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -612,6 +687,15 @@ export const PlaylistScalarFieldEnum = {
 } as const
 
 export type PlaylistScalarFieldEnum = (typeof PlaylistScalarFieldEnum)[keyof typeof PlaylistScalarFieldEnum]
+
+
+export const PlaylistSongScalarFieldEnum = {
+  playlistId: 'playlistId',
+  songId: 'songId',
+  dateAdded: 'dateAdded'
+} as const
+
+export type PlaylistSongScalarFieldEnum = (typeof PlaylistSongScalarFieldEnum)[keyof typeof PlaylistSongScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -803,6 +887,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   song?: Prisma.SongOmit
   playlist?: Prisma.PlaylistOmit
+  playlistSong?: Prisma.PlaylistSongOmit
 }
 
 /* Types for Logging */
