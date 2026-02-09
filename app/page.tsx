@@ -4,7 +4,7 @@ import { Sidebar } from "@/components/molecules/Sidebar";
 import PlaylistHeader from "@/components/molecules/PlaylistHeader";
 import PlaylistTable from "@/components/molecules/PlaylistTable";
 import FindSongs from "@/components/molecules/FindSongs";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
   deletePlaylist,
 } from "@/services/playlists";
 import EditPlaylistModal from "@/components/molecules/EditPlaylistModal";
+import { toast } from "sonner";
 
 export default function Home() {
   const queryClient = useQueryClient();
@@ -40,45 +41,68 @@ export default function Home() {
     queryFn: fetchPlaylists,
   });
 
-  useEffect(() => {
-    if (!currentPlaylistId && playlistsData.length > 0) {
-      setCurrentPlaylistId(playlistsData[0].id);
-    }
+  const activePlaylistId = useMemo(() => {
+    if (currentPlaylistId) return currentPlaylistId;
+    return playlistsData.length > 0 ? playlistsData[0].id : null;
   }, [currentPlaylistId, playlistsData]);
 
   const { data: currentPlaylist, isLoading: loadingPlaylist } = useQuery({
-    queryKey: ["playlist", currentPlaylistId],
-    queryFn: () => fetchPlaylist(currentPlaylistId!),
-    enabled: !!currentPlaylistId,
+    queryKey: ["playlist", activePlaylistId],
+    queryFn: () => fetchPlaylist(activePlaylistId!),
+    enabled: !!activePlaylistId,
   });
 
   const createPlaylistMutation = useMutation({
     mutationFn: (name: string) => createPlaylist(name),
-    onSuccess: () => {
+    onSuccess: (newPlaylist) => {
       queryClient.invalidateQueries({ queryKey: ["playlists"] });
+      setCurrentPlaylistId(newPlaylist.id);
+      toast.success("Playlist created");
     },
+    onError: () => toast.error("Failed to create playlist"),
   });
 
   const addSongMutation = useMutation({
     mutationFn: (songId: string) =>
-      addSongToPlaylist(currentPlaylistId!, songId),
+      addSongToPlaylist(activePlaylistId!, songId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["playlist", currentPlaylistId],
+        queryKey: ["playlist", activePlaylistId],
       });
       queryClient.invalidateQueries({ queryKey: ["playlists"] });
+      toast.success("Song added to playlist");
     },
+    onError: () => toast.error("Failed to add song"),
+  });
+
+  const addSongToOtherPlaylistMutation = useMutation({
+    mutationFn: ({
+      songId,
+      playlistId,
+    }: {
+      songId: string;
+      playlistId: string;
+    }) => addSongToPlaylist(playlistId, songId),
+    onSuccess: (_data, { playlistId }) => {
+      queryClient.invalidateQueries({ queryKey: ["playlist", playlistId] });
+      queryClient.invalidateQueries({ queryKey: ["playlists"] });
+      const playlistName = playlistsData.find((p) => p.id === playlistId)?.name;
+      toast.success(`Added to ${playlistName ?? "playlist"}`);
+    },
+    onError: () => toast.error("Failed to add song"),
   });
 
   const removeSongMutation = useMutation({
     mutationFn: (songId: string) =>
-      removeSongFromPlaylist(currentPlaylistId!, songId),
+      removeSongFromPlaylist(activePlaylistId!, songId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["playlist", currentPlaylistId],
+        queryKey: ["playlist", activePlaylistId],
       });
       queryClient.invalidateQueries({ queryKey: ["playlists"] });
+      toast.success("Song removed from playlist");
     },
+    onError: () => toast.error("Failed to remove song"),
   });
 
   const updatePlaylistMutation = useMutation({
@@ -86,22 +110,26 @@ export default function Home() {
       name: string;
       description: string;
       isPublic: boolean;
-    }) => updatePlaylist(currentPlaylistId!, data),
+    }) => updatePlaylist(activePlaylistId!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["playlist", currentPlaylistId],
+        queryKey: ["playlist", activePlaylistId],
       });
       queryClient.invalidateQueries({ queryKey: ["playlists"] });
+      toast.success("Playlist updated");
     },
+    onError: () => toast.error("Failed to update playlist"),
   });
 
   const deletePlaylistMutation = useMutation({
-    mutationFn: () => deletePlaylist(currentPlaylistId!),
+    mutationFn: () => deletePlaylist(activePlaylistId!),
     onSuccess: () => {
-      const remaining = playlistsData.filter((p) => p.id !== currentPlaylistId);
+      const remaining = playlistsData.filter((p) => p.id !== activePlaylistId);
       setCurrentPlaylistId(remaining.length > 0 ? remaining[0].id : null);
       queryClient.invalidateQueries({ queryKey: ["playlists"] });
+      toast.success("Playlist deleted");
     },
+    onError: () => toast.error("Failed to delete playlist"),
   });
 
   const handleToggleSearch = () => {
@@ -115,8 +143,8 @@ export default function Home() {
     id: p.id,
     name: p.name,
     description: `${p._count.songs} song${p._count.songs === 1 ? "" : "s"}`,
-    coverUrl: "",
-    songIds: Array(p._count.songs).fill(""),
+    coverImages: p.coverImages,
+    songCount: p._count.songs,
   }));
 
   const tableSongs = (currentPlaylist?.songs ?? [])
@@ -151,7 +179,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-black">
-      {/* Mobile sidebar overlay */}
       {showSidebar && (
         <div
           className="fixed inset-0 bg-black/60 z-40 md:hidden"
@@ -166,7 +193,7 @@ export default function Home() {
       >
         <Sidebar
           playlists={sidebarPlaylists}
-          currentPlaylistId={currentPlaylistId}
+          currentPlaylistId={activePlaylistId}
           onSelectPlaylist={handleSelectPlaylist}
           onCreatePlaylist={() =>
             createPlaylistMutation.mutate(
@@ -193,7 +220,7 @@ export default function Home() {
             </h2>
           )}
         </div>
-        {currentPlaylistId ? (
+        {activePlaylistId ? (
           loadingPlaylist ? (
             <div className="flex items-center justify-center h-full">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
@@ -228,6 +255,7 @@ export default function Home() {
                 name={currentPlaylist.name}
                 description={currentPlaylist.description ?? ""}
                 isPublic={currentPlaylist.isPublic}
+                coverImages={coverImages}
                 onSave={(name, description, isPublic) =>
                   updatePlaylistMutation.mutate({ name, description, isPublic })
                 }
@@ -240,7 +268,7 @@ export default function Home() {
                   name: p.name,
                 }))}
                 onAddToPlaylist={(songId, playlistId) =>
-                  addSongToPlaylist(playlistId, songId)
+                  addSongToOtherPlaylistMutation.mutate({ songId, playlistId })
                 }
                 onRemoveFromPlaylist={(songId) =>
                   removeSongMutation.mutate(songId)

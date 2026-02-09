@@ -5,7 +5,6 @@ import {
   Heart,
   MoreHorizontal,
   Download,
-  UserPlus,
   ListMusic,
   Search,
   Lock,
@@ -36,7 +35,6 @@ export interface PlaylistHeaderProps {
   songCount: number;
   durationInMilliSeconds: number;
   isPublic?: boolean;
-  isLiked?: boolean;
   showSearch?: boolean;
   searchQuery?: string;
   onSearchQueryChange?: (query: string) => void;
@@ -54,7 +52,6 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
     songCount,
     durationInMilliSeconds,
     isPublic = true,
-    isLiked = false,
     onDelete,
     onSearch,
     onEditDetails,
@@ -126,7 +123,6 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
         </div>
       </div>
 
-      {/* Mobile: full-width search when open */}
       {showSearch && (
         <div className="flex md:hidden items-center gap-2 mb-2">
           <div className="relative flex-1">
@@ -181,11 +177,9 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
-              className={`hidden sm:flex size-12 rounded-full hover:bg-transparent ${
-                isLiked ? "text-[#1db954]" : "text-[#b3b3b3] hover:text-white"
-              }`}
+              className="hidden sm:flex size-12 rounded-full hover:bg-transparent text-[#b3b3b3] hover:text-white"
             >
-              <Heart className={`size-6 ${isLiked ? "fill-[#1db954]" : ""}`} />
+              <Heart className="size-6" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>{"Save to Your Library"}</TooltipContent>
@@ -280,7 +274,6 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           )}
         </div>
 
-        {/* Mobile search icon */}
         {!showSearch && (
           <div className="ml-auto md:hidden">
             <Button

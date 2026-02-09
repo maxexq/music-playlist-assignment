@@ -25,6 +25,10 @@ export async function GET() {
       createdAt: p.createdAt,
       isPublic: p.isPublic,
       _count: { songs: p.songs.length },
+      coverImages: p.songs
+        .map((ps) => ps.song.coverUrl)
+        .filter((url): url is string => !!url)
+        .slice(0, 4),
     }));
 
     return NextResponse.json(result);

@@ -6,6 +6,7 @@ export interface PlaylistSummary {
   createdAt: string;
   isPublic: boolean;
   _count: { songs: number };
+  coverImages: string[];
 }
 
 export interface PlaylistSongEntry {

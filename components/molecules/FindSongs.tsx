@@ -92,7 +92,7 @@ const FindSongs = (props: FindSongsProps) => {
                       alt={song.title}
                       fill
                       className="object-cover"
-                      sizes="40px"
+                      sizes="80px"
                     />
                   ) : (
                     <div className="size-full bg-[#282828]" />
@@ -117,7 +117,7 @@ const FindSongs = (props: FindSongsProps) => {
               <Button
                 variant="outline"
                 size="sm"
-                className="shrink-0 rounded-full border-[#b3b3b3] text-white hover:border-white hover:bg-transparent bg-transparent hover:scale-105 transition-transform"
+                className="shrink-0 rounded-full border-[#b3b3b3] text-white! hover:border-white hover:bg-transparent bg-transparent hover:scale-105 transition-transform"
                 onClick={() => onAddSong(song.id)}
               >
                 Add

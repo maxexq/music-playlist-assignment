@@ -7,8 +7,8 @@ export interface Playlist {
   id: string;
   name: string;
   description: string;
-  coverUrl: string;
-  songIds: string[];
+  coverImages: string[];
+  songCount: number;
 }
 
 interface SidebarProps {
@@ -38,7 +38,7 @@ export function Sidebar(props: SidebarProps) {
 
   return (
     <nav>
-      <div className="w-[280px] sm:w-[320px] bg-[#121212] flex flex-1 flex-col h-screen rounded-lg overflow-hidden relative">
+      <div className="w-70 sm:w-[320px] bg-[#121212] flex flex-1 flex-col h-screen rounded-lg overflow-hidden relative">
         <div className="sticky top-0 z-10 bg-[#121212]">
           <SidebarHeader menuItems={menuItems} />
         </div>
@@ -63,8 +63,8 @@ export function Sidebar(props: SidebarProps) {
                   id={playlist.id}
                   name={playlist.name}
                   description={playlist.description}
-                  coverUrl={playlist.coverUrl}
-                  songCount={playlist.songIds.length}
+                  coverImages={playlist.coverImages}
+                  songCount={playlist.songCount}
                   isActive={currentPlaylistId === playlist.id}
                   onClick={() => onSelectPlaylist(playlist.id)}
                 />

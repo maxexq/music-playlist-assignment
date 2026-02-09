@@ -1,12 +1,11 @@
 import React from "react";
-import { Music } from "lucide-react";
-import Image from "next/image";
+import PlaylistCover from "./PlaylistCover";
 
 export interface PlaylistItemProps {
   id: string;
   name: string;
   description?: string;
-  coverUrl?: string;
+  coverImages?: string[];
   songCount: number;
   isActive?: boolean;
   onClick?: () => void;
@@ -16,7 +15,7 @@ const PlaylistItem = (props: PlaylistItemProps) => {
   const {
     name,
     description,
-    coverUrl,
+    coverImages = [],
     songCount,
     isActive = false,
     onClick,
@@ -29,21 +28,7 @@ const PlaylistItem = (props: PlaylistItemProps) => {
         isActive ? "bg-[#ffffff1a]" : "hover:bg-[#ffffff0d]"
       }`}
     >
-      <div className="relative size-12 rounded overflow-hidden shrink-0 bg-[#282828]">
-        {coverUrl ? (
-          <Image
-            src={coverUrl}
-            alt={name}
-            fill
-            className="object-cover"
-            sizes="48px"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Music size={20} className="text-[#b3b3b3]" />
-          </div>
-        )}
-      </div>
+      <PlaylistCover images={coverImages} size={48} />
       <div className="flex-1 min-w-0 text-left">
         <p
           className={`text-base font-normal truncate ${
