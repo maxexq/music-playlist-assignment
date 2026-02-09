@@ -1,19 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-
-interface SearchResult {
-  id: string;
-  title: string;
-  artist: string;
-  album: string | null;
-  durationMs: number;
-  coverUrl: string | null;
-}
+import { searchSongs } from "@/services/songs";
 
 interface FindSongsProps {
   onClose: () => void;
@@ -22,8 +15,7 @@ interface FindSongsProps {
 
 const FindSongs = ({ onClose, onAddSong }: FindSongsProps) => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -31,30 +23,17 @@ const FindSongs = ({ onClose, onAddSong }: FindSongsProps) => {
   }, []);
 
   useEffect(() => {
-    if (!query.trim()) {
-      setResults([]);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `/api/songs/search?query=${encodeURIComponent(query.trim())}`,
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setResults(data);
-        }
-      } catch {
-        // silently fail
-      } finally {
-        setLoading(false);
-      }
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query.trim());
     }, 300);
-
     return () => clearTimeout(timer);
   }, [query]);
+
+  const { data: results = [], isLoading } = useQuery({
+    queryKey: ["searchSongs", debouncedQuery],
+    queryFn: () => searchSongs(debouncedQuery),
+    enabled: debouncedQuery.length > 0,
+  });
 
   return (
     <div className="px-6 py-6 border-t border-[#ffffff1a]">
@@ -96,11 +75,11 @@ const FindSongs = ({ onClose, onAddSong }: FindSongsProps) => {
       </div>
 
       {/* Results */}
-      {loading && (
+      {isLoading && (
         <div className="py-4 text-[#b3b3b3] text-sm">Searching...</div>
       )}
 
-      {!loading && results.length > 0 && (
+      {!isLoading && results.length > 0 && (
         <div className="flex flex-col">
           {results.map((song) => (
             <div
@@ -153,9 +132,9 @@ const FindSongs = ({ onClose, onAddSong }: FindSongsProps) => {
         </div>
       )}
 
-      {!loading && query.trim() && results.length === 0 && (
+      {!isLoading && debouncedQuery && results.length === 0 && (
         <div className="py-4 text-[#b3b3b3] text-sm">
-          No results found for &quot;{query}&quot;
+          No results found for &quot;{debouncedQuery}&quot;
         </div>
       )}
     </div>
