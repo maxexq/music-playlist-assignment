@@ -29,18 +29,11 @@ export interface PlaylistHeaderProps {
   description?: string;
   coverImages?: string[];
   songCount: number;
-  totalDuration: string;
+  durationInMilliSeconds: number;
   isLiked?: boolean;
-  onPlay?: () => void;
-  onShuffle?: () => void;
-  onLike?: () => void;
-  onAddToQueue?: () => void;
-  onDownload?: () => void;
-  onShare?: () => void;
-  onEdit?: () => void;
+  showSearch?: boolean;
   onDelete?: () => void;
   onSearch?: () => void;
-  showSearch?: boolean;
 }
 
 const PlaylistHeader = (props: PlaylistHeaderProps) => {
@@ -49,23 +42,24 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
     description,
     coverImages = [],
     songCount,
-    totalDuration,
+    durationInMilliSeconds,
     isLiked = false,
-    onPlay,
-    onShuffle,
-    onLike,
-    onAddToQueue,
-    onDownload,
-    onShare,
-    onEdit,
     onDelete,
     onSearch,
     showSearch = false,
   } = props;
 
+  const calTotalDuration = () => {
+    const hours = Math.floor(durationInMilliSeconds / 3600000);
+    const minutes = Math.floor((durationInMilliSeconds % 3600000) / 60000);
+    const seconds = Math.floor((durationInMilliSeconds % 60000) / 1000);
+    return hours > 0
+      ? `${hours} hr ${minutes} min`
+      : `${minutes} min ${seconds} sec`;
+  };
+
   return (
     <div className="p-6">
-      {/* Playlist Info */}
       <div className="flex items-end gap-6 mb-6">
         <PlaylistCover
           images={coverImages}
@@ -83,34 +77,34 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
               {description}
             </p>
           )}
-          <p className="text-sm text-[#b3b3b3]">
-            <span className="text-white font-medium">{songCount} songs</span>
-            <span className="mx-1">•</span>
-            <span>{totalDuration}</span>
-          </p>
+          {songCount > 0 && (
+            <p className="text-sm text-[#b3b3b3]">
+              <span>
+                {songCount} song{songCount === 1 ? "" : "s"}
+              </span>
+              {durationInMilliSeconds && (
+                <>
+                  <span>,</span> <span>{calTotalDuration()}</span>
+                </>
+              )}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Action Buttons */}
       <div className="flex items-center gap-4">
-        {/* Play Button */}
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              onClick={onPlay}
-              className="size-14 rounded-full bg-[#1db954] hover:bg-[#1ed760] hover:scale-105 transition-all"
-            >
+            <Button className="size-14 rounded-full bg-[#1db954] hover:bg-[#1ed760] hover:scale-105 transition-all">
               <Play className="size-6 fill-black text-black ml-1" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Play</TooltipContent>
         </Tooltip>
 
-        {/* Shuffle Button */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              onClick={onShuffle}
               variant="ghost"
               className="size-12 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
             >
@@ -120,11 +114,9 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           <TooltipContent>Shuffle</TooltipContent>
         </Tooltip>
 
-        {/* Like Button */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              onClick={onLike}
               variant="ghost"
               className={`size-12 rounded-full hover:bg-transparent ${
                 isLiked ? "text-[#1db954]" : "text-[#b3b3b3] hover:text-white"
@@ -133,16 +125,12 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
               <Heart className={`size-6 ${isLiked ? "fill-[#1db954]" : ""}`} />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>
-            {isLiked ? "Remove from Your Library" : "Save to Your Library"}
-          </TooltipContent>
+          <TooltipContent>{"Save to Your Library"}</TooltipContent>
         </Tooltip>
 
-        {/* Download Button */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              onClick={onDownload}
               variant="ghost"
               className="size-12 rounded-full text-[#b3b3b3] hover:text-white hover:bg-transparent"
             >
@@ -152,7 +140,6 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           <TooltipContent>Download</TooltipContent>
         </Tooltip>
 
-        {/* More Options */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -166,24 +153,15 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
             align="start"
             className="w-52 bg-[#282828] border-none text-white"
           >
-            <DropdownMenuItem
-              onClick={onAddToQueue}
-              className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer"
-            >
+            <DropdownMenuItem className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer">
               <ListMusic className="size-4 mr-3" />
               Add to queue
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-[#ffffff1a]" />
-            <DropdownMenuItem
-              onClick={onEdit}
-              className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer"
-            >
+            <DropdownMenuItem className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer">
               Edit details
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={onShare}
-              className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer"
-            >
+            <DropdownMenuItem className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer">
               <UserPlus className="size-4 mr-3" />
               Share
             </DropdownMenuItem>
@@ -197,7 +175,6 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Search in Playlist */}
         <div className="ml-auto">
           <Tooltip>
             <TooltipTrigger asChild>

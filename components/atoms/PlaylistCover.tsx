@@ -1,6 +1,7 @@
 import React from "react";
 import { Music } from "lucide-react";
 import CoverImage from "./CoverImage";
+import { cn } from "@/lib/utils";
 
 interface PlaylistCoverProps {
   images?: string[];
@@ -71,7 +72,7 @@ const PlaylistCover = (props: PlaylistCoverProps) => {
 
   return (
     <div
-      className={`rounded-md overflow-hidden shrink-0 ${className}`}
+      className={cn`rounded-md overflow-hidden shrink-0 shadow-2xl  ${className}`}
       style={{ width: size, height: size }}
     >
       {renderContent()}

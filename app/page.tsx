@@ -3,130 +3,17 @@
 import { Sidebar } from "@/components/molecules/Sidebar";
 import PlaylistHeader from "@/components/molecules/PlaylistHeader";
 import PlaylistTable from "@/components/molecules/PlaylistTable";
-import { useState, useMemo } from "react";
-import { toast } from "sonner";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { songs } from "@/const/mock";
 
 export default function Home() {
   const [currentPlaylistId, setCurrentPlaylistId] = useState<string | null>(
     null,
   );
-  const [currentPlayingSongId, setCurrentPlayingSongId] = useState<
-    string | null
-  >(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [likedSongIds, setLikedSongIds] = useState<string[]>([]);
-  const [likedPlaylistIds, setLikedPlaylistIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
-  const [queue, setQueue] = useState<string[]>([]);
-
-  // const currentPlaylist = playlists.find((p) => p.id === currentPlaylistId);
-
-  // const filteredSongs = useMemo(() => {
-  //   if (!searchQuery) return playlistSongs;
-  //   const query = searchQuery.toLowerCase();
-  //   return playlistSongs.filter(
-  //     (song) =>
-  //       song.title.toLowerCase().includes(query) ||
-  //       song.artist.toLowerCase().includes(query) ||
-  //       song.album.toLowerCase().includes(query)
-  //   );
-  // }, [playlistSongs, searchQuery]);
-
-  // const totalDuration = useMemo(() => {
-  //   const totalSeconds = playlistSongs.reduce((acc, song) => acc + song.duration, 0);
-  //   const hours = Math.floor(totalSeconds / 3600);
-  //   const mins = Math.floor((totalSeconds % 3600) / 60);
-  //   if (hours > 0) {
-  //     return `${hours} hr ${mins} min`;
-  //   }
-  //   return `${mins} min`;
-  // }, [playlistSongs]);
-
-  // const coverImages = useMemo(() => {
-  //   return playlistSongs.slice(0, 4).map((song) => song.coverUrl);
-  // }, [playlistSongs]);
-
-  // Playlist Actions
-  // const handleCreatePlaylist = async () => {
-  //   const playlistNumbers = playlists
-  //     .map((p) => {
-  //       const match = p.name.match(/^My Playlist #(\d+)$/);
-  //       return match ? parseInt(match[1]) : 0;
-  //     })
-  //     .filter((n) => n > 0);
-
-  //   const nextNumber =
-  //     playlistNumbers.length > 0 ? Math.max(...playlistNumbers) + 1 : 1;
-  //   const playlistName = `My Playlist #${nextNumber}`;
-
-  //   const newPlaylist = await createPlaylist(playlistName);
-  //   if (newPlaylist) {
-  //     setCurrentPlaylistId(newPlaylist.id);
-  //     toast.success(`Playlist "${playlistName}" created!`);
-  //   }
-  // };
-
-  // const handlePlay = () => {
-  //   if (playlistSongs.length > 0) {
-  //     setCurrentPlayingSongId(playlistSongs[0].id);
-  //     setIsPlaying(true);
-  //     toast.success(`Playing ${currentPlaylist?.name}`);
-  //   }
-  // };
-
-  // const handleShuffle = () => {
-  //   if (playlistSongs.length > 0) {
-  //     const randomIndex = Math.floor(Math.random() * playlistSongs.length);
-  //     setCurrentPlayingSongId(playlistSongs[randomIndex].id);
-  //     setIsPlaying(true);
-  //     toast.success("Shuffle enabled");
-  //   }
-  // };
-
-  // const handleLikePlaylist = () => {
-  //   if (!currentPlaylistId) return;
-  //   if (likedPlaylistIds.includes(currentPlaylistId)) {
-  //     setLikedPlaylistIds(likedPlaylistIds.filter((id) => id !== currentPlaylistId));
-  //     toast.success("Removed from Your Library");
-  //   } else {
-  //     setLikedPlaylistIds([...likedPlaylistIds, currentPlaylistId]);
-  //     toast.success("Added to Your Library");
-  //   }
-  // };
-
-  // const handleAddPlaylistToQueue = () => {
-  //   if (currentPlaylist) {
-  //     setQueue([...queue, ...currentPlaylist.songIds]);
-  //     toast.success(`Added ${currentPlaylist.name} to queue`);
-  //   }
-  // };
-
-  const handleDownload = () => {
-    toast.success("Download started");
-  };
-
-  const handleShare = () => {
-    toast.success("Link copied to clipboard");
-  };
-
-  const handleEditPlaylist = () => {
-    toast.info("Edit playlist dialog would open here");
-  };
-
-  // const handleDeletePlaylist = async () => {
-  //   if (!currentPlaylistId) return;
-  //   const playlistName = currentPlaylist?.name;
-  //   const success = await deletePlaylist(currentPlaylistId);
-  //   if (success) {
-  //     setCurrentPlaylistId(null);
-  //     toast.success(`Deleted "${playlistName}"`);
-  //   }
-  // };
 
   const handleToggleSearch = () => {
     setShowSearch(!showSearch);
@@ -135,76 +22,18 @@ export default function Home() {
     }
   };
 
-  // Song Actions
-  // const handlePlaySong = (songId: string) => {
-  //   setCurrentPlayingSongId(songId);
-  //   setIsPlaying(true);
-  //   const song = songs.find((s) => s.id === songId);
-  //   if (song) {
-  //     toast.success(`Now playing: ${song.title}`);
-  //   }
-  // };
-
-  const handlePauseSong = () => {
-    setIsPlaying(false);
+  const currentPlaylist = {
+    name: "My Playlist",
+    description: "My favorite songs",
+    coverImages: ["https://example.com/cover.jpg"],
+    songIds: ["song1", "song2", "song3"],
+    id: "playlist1",
+    coverImage: [
+      "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
+      "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
+      "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
+    ],
   };
-
-  const handleLikeSong = (songId: string) => {
-    setLikedSongIds([...likedSongIds, songId]);
-    toast.success("Added to Liked Songs");
-  };
-
-  const handleUnlikeSong = (songId: string) => {
-    setLikedSongIds(likedSongIds.filter((id) => id !== songId));
-    toast.success("Removed from Liked Songs");
-  };
-
-  const handleAddSongToQueue = (songId: string) => {
-    setQueue([...queue, songId]);
-    const song = songs.find((s) => s.id === songId);
-    toast.success(`Added "${song?.title}" to queue`);
-  };
-
-  // const handleAddToPlaylist = async (songId: string, playlistId: string) => {
-  //   const playlist = playlists.find((p) => p.id === playlistId);
-  //   if (playlist && !playlist.songIds.includes(songId)) {
-  //     await updatePlaylist(playlistId, {
-  //       songIds: [...playlist.songIds, songId],
-  //     });
-  //     const song = songs.find((s) => s.id === songId);
-  //     toast.success(`Added "${song?.title}" to ${playlist.name}`);
-  //   } else {
-  //     toast.error("Song already in playlist");
-  //   }
-  // };
-
-  // const handleRemoveFromPlaylist = async (songId: string) => {
-  //   if (!currentPlaylist) return;
-  //   await updatePlaylist(currentPlaylist.id, {
-  //     songIds: currentPlaylist.songIds.filter((id) => id !== songId),
-  //   });
-  //   const song = songs.find((s) => s.id === songId);
-  //   toast.success(`Removed "${song?.title}" from playlist`);
-  // };
-
-  const handleGoToArtist = (artist: string) => {
-    toast.info(`Navigate to artist: ${artist}`);
-  };
-
-  const handleGoToAlbum = (album: string) => {
-    toast.info(`Navigate to album: ${album}`);
-  };
-
-  const handleStartRadio = (songId: string) => {
-    const song = songs.find((s) => s.id === songId);
-    toast.success(`Starting radio based on "${song?.title}"`);
-  };
-
-  const handleShareSong = (songId: string) => {
-    toast.success("Song link copied to clipboard");
-  };
-
-  const currentPlaylist = false;
 
   return (
     <div className="flex h-screen bg-black">
@@ -216,24 +45,15 @@ export default function Home() {
         loading={false}
       />
 
-      <main className="flex-1 overflow-y-auto bg-gradient-to-b from-[#535353] to-[#121212]">
+      <main className="flex-1 overflow-y-auto bg-linear-to-b from-[#535353] to-[#121212]">
         {currentPlaylist ? (
           <>
             <PlaylistHeader
               name={currentPlaylist.name}
               description={currentPlaylist.description}
-              coverImages={coverImages}
-              songCount={playlistSongs.length}
-              totalDuration={totalDuration}
-              isLiked={likedPlaylistIds.includes(currentPlaylist.id)}
-              onPlay={handlePlay}
-              onShuffle={handleShuffle}
-              onLike={handleLikePlaylist}
-              // onAddToQueue={handleAddPlaylistToQueue}
-              onDownload={handleDownload}
-              onShare={handleShare}
-              onEdit={handleEditPlaylist}
-              // onDelete={handleDeletePlaylist}
+              coverImages={currentPlaylist.coverImage}
+              songCount={10}
+              durationInMilliSeconds={1834325}
               onSearch={handleToggleSearch}
               showSearch={showSearch}
             />
@@ -263,8 +83,8 @@ export default function Home() {
               </div>
             )}
 
-            <PlaylistTable
-              songs={filteredSongs}
+            {/*<PlaylistTable
+              songs={songs}
               playlists={playlists.map((p) => ({ id: p.id, name: p.name }))}
               currentPlayingSongId={currentPlayingSongId}
               isPlaying={isPlaying}
@@ -280,7 +100,7 @@ export default function Home() {
               onGoToAlbum={handleGoToAlbum}
               onStartRadio={handleStartRadio}
               onShare={handleShareSong}
-            />
+            />*/}
           </>
         ) : (
           <div className="flex items-center justify-center h-full">
