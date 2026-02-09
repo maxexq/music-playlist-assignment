@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import {
   Play,
   Shuffle,
@@ -9,9 +9,12 @@ import {
   ListMusic,
   Search,
   Lock,
+  Pen,
+  CircleMinus,
 } from "lucide-react";
 import PlaylistCover from "@/components/atoms/PlaylistCover";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +37,8 @@ export interface PlaylistHeaderProps {
   isPublic?: boolean;
   isLiked?: boolean;
   showSearch?: boolean;
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
   onDelete?: () => void;
   onSearch?: () => void;
   onEditDetails?: () => void;
@@ -54,7 +59,17 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
     onEditDetails,
     onTogglePublic,
     showSearch = false,
+    searchQuery = "",
+    onSearchQueryChange,
   } = props;
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (showSearch) {
+      searchInputRef.current?.focus();
+    }
+  }, [showSearch]);
 
   const calTotalDuration = () => {
     const hours = Math.floor(durationInMilliSeconds / 3600000);
@@ -174,8 +189,17 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
               onClick={onEditDetails}
               className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer"
             >
+              <Pen className="size-4 mr-3" />
               Edit details
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={onDelete}
+              className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer "
+            >
+              <CircleMinus className="size-4 mr-3" />
+              Delete
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-[#ffffff1a]" />
             <DropdownMenuItem
               onClick={onTogglePublic}
               className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer"
@@ -183,35 +207,42 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
               <Lock className="size-4 mr-3" />
               {isPublic ? "Make private" : "Make public"}
             </DropdownMenuItem>
-            <DropdownMenuItem className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer">
-              <UserPlus className="size-4 mr-3" />
-              Share
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-[#ffffff1a]" />
-            <DropdownMenuItem
-              onClick={onDelete}
-              className="focus:bg-[#ffffff1a] focus:text-white cursor-pointer text-red-400"
-            >
-              Delete playlist
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="ml-auto">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={onSearch}
-                variant="ghost"
-                className={`size-10 rounded-full hover:bg-transparent ${
-                  showSearch ? "text-white" : "text-[#b3b3b3] hover:text-white"
-                }`}
-              >
-                <Search className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Search in playlist</TooltipContent>
-          </Tooltip>
+        <div className="ml-auto flex items-center">
+          <div
+            className="relative overflow-hidden transition-all duration-200 ease-in-out"
+            style={{ width: showSearch ? 192 : 0, opacity: showSearch ? 1 : 0 }}
+          >
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#b3b3b3]" />
+              <Input
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={(e) => onSearchQueryChange?.(e.target.value)}
+                onBlur={() => {
+                  if (!searchQuery) onSearch?.();
+                }}
+                placeholder="Search in playlist"
+                className="pl-9 pr-3 w-48 h-8 bg-[#2a2a2a] border-none text-white text-sm placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white/50 rounded"
+              />
+            </div>
+          </div>
+          {!showSearch && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={onSearch}
+                  variant="ghost"
+                  className="size-10 rounded-full hover:bg-transparent text-[#b3b3b3] hover:text-white"
+                >
+                  <Search className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Search in playlist</TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </div>
     </div>

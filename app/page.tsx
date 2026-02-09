@@ -6,9 +6,6 @@ import PlaylistTable from "@/components/molecules/PlaylistTable";
 import FindSongs from "@/components/molecules/FindSongs";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Input } from "@/components/ui/input";
-import { Search, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   fetchPlaylists,
   fetchPlaylist,
@@ -98,15 +95,25 @@ export default function Home() {
     songIds: Array(p._count.songs).fill(""),
   }));
 
-  const tableSongs = (currentPlaylist?.songs ?? []).map((entry) => ({
-    id: entry.song.id,
-    title: entry.song.title,
-    artist: entry.song.artist,
-    album: entry.song.album ?? "",
-    duration: Math.floor(entry.song.durationMs / 1000),
-    coverUrl: entry.song.coverUrl ?? "",
-    dateAdded: entry.dateAdded,
-  }));
+  const tableSongs = (currentPlaylist?.songs ?? [])
+    .map((entry) => ({
+      id: entry.song.id,
+      title: entry.song.title,
+      artist: entry.song.artist,
+      album: entry.song.album ?? "",
+      duration: Math.floor(entry.song.durationMs / 1000),
+      coverUrl: entry.song.coverUrl ?? "",
+      dateAdded: entry.dateAdded,
+    }))
+    .filter((song) => {
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      return (
+        song.title.toLowerCase().includes(q) ||
+        song.artist.toLowerCase().includes(q) ||
+        song.album.toLowerCase().includes(q)
+      );
+    });
 
   const coverImages = (currentPlaylist?.songs ?? [])
     .map((entry) => entry.song.coverUrl)
@@ -149,6 +156,8 @@ export default function Home() {
                 isPublic={currentPlaylist.isPublic}
                 onSearch={handleToggleSearch}
                 showSearch={showSearch}
+                searchQuery={searchQuery}
+                onSearchQueryChange={setSearchQuery}
                 onEditDetails={() => setShowEditModal(true)}
                 onTogglePublic={() =>
                   updatePlaylistMutation.mutate({
@@ -169,31 +178,6 @@ export default function Home() {
                   updatePlaylistMutation.mutate({ name, description, isPublic })
                 }
               />
-
-              {/* Search Bar */}
-              {showSearch && (
-                <div className="px-6 mb-4">
-                  <div className="relative max-w-xs">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#b3b3b3]" />
-                    <Input
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search in playlist"
-                      className="pl-10 pr-10 bg-[#ffffff1a] border-none text-white placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white"
-                    />
-                    {searchQuery && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 size-6 hover:bg-transparent text-[#b3b3b3] hover:text-white"
-                        onClick={() => setSearchQuery("")}
-                      >
-                        <X className="size-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              )}
 
               <PlaylistTable
                 songs={tableSongs}

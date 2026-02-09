@@ -93,11 +93,6 @@ function EditPlaylistForm(props: EditPlaylistFormProps) {
           Save
         </Button>
       </div>
-
-      <p className="text-[11px] text-[#b3b3b3] mt-4 font-bold">
-        By proceeding, you agree to give Spotify access to the image you choose
-        to upload. Please make sure you have the right to upload the image.
-      </p>
     </>
   );
 }
@@ -106,7 +101,7 @@ const EditPlaylistModal = (props: EditPlaylistModalProps) => {
   const { open, onOpenChange, name, description, isPublic, onSave } = props;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#282828] border-none text-white max-w-[524px] p-6 gap-0 [&>button]:hidden">
+      <DialogContent className="bg-[#282828] border-none text-white max-w-131 p-6 gap-0 [&>button]:hidden">
         {open && (
           <EditPlaylistForm
             key={`${name}-${description}-${isPublic}`}
