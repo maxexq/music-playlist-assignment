@@ -62,6 +62,7 @@ export async function addSongToPlaylist(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ songId }),
   });
+  if (res.status === 409) throw new Error("ALREADY_EXISTS");
   if (!res.ok) throw new Error("Failed to add song to playlist");
 }
 

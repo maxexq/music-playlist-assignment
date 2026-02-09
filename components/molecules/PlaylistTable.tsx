@@ -1,16 +1,5 @@
 import React, { useState } from "react";
-import {
-  Play,
-  Heart,
-  MoreHorizontal,
-  Clock,
-  ListPlus,
-  Radio,
-  UserPlus,
-  Trash2,
-  ChevronRight,
-  Plus,
-} from "lucide-react";
+import { Play, Heart, MoreHorizontal, Clock, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -52,7 +41,6 @@ export interface Playlist {
 export interface PlaylistTableProps {
   songs: Song[];
   playlists: Playlist[];
-  currentPlayingSongId?: string | null;
   onAddToPlaylist: (songId: string, playlistId: string) => void;
   onRemoveFromPlaylist: (songId: string) => void;
 }
@@ -73,13 +61,7 @@ const formatDateAdded = (dateString: string): string => {
 };
 
 const PlaylistTable = (props: PlaylistTableProps) => {
-  const {
-    songs,
-    playlists,
-    currentPlayingSongId,
-    onAddToPlaylist,
-    onRemoveFromPlaylist,
-  } = props;
+  const { songs, playlists, onAddToPlaylist, onRemoveFromPlaylist } = props;
 
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
@@ -97,7 +79,6 @@ const PlaylistTable = (props: PlaylistTableProps) => {
 
       <div className="mt-2">
         {songs.map((song, index) => {
-          const isCurrentSong = currentPlayingSongId === song.id;
           const isHovered = hoveredRow === song.id;
 
           return (
@@ -120,11 +101,7 @@ const PlaylistTable = (props: PlaylistTableProps) => {
                         <Play className="size-4 fill-white text-white" />
                       </Button>
                     ) : (
-                      <span
-                        className={`text-sm ${
-                          isCurrentSong ? "text-[#1db954]" : "text-[#b3b3b3]"
-                        }`}
-                      >
+                      <span className="text-sm text-[#b3b3b3]">
                         {index + 1}
                       </span>
                     )}
@@ -141,11 +118,7 @@ const PlaylistTable = (props: PlaylistTableProps) => {
                       />
                     </div>
                     <div className="min-w-0">
-                      <p
-                        className={`text-base truncate ${
-                          isCurrentSong ? "text-[#1db954]" : "text-white"
-                        }`}
-                      >
+                      <p className="text-base truncate text-white">
                         {song.title}
                       </p>
                       <p className="text-sm text-[#b3b3b3] truncate hover:text-white hover:underline cursor-pointer">

@@ -94,11 +94,11 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
           priority
         />
         <div className="flex-1 min-w-0 text-center sm:text-left w-full">
-          <p className="text-xs sm:text-sm font-medium text-white uppercase">
+          <p className="text-xs sm:text-sm font-medium text-white">
             {isPublic ? "Public Playlist" : "Private Playlist"}
           </p>
           <h1
-            className="text-2xl sm:text-5xl font-bold text-white mt-1 sm:mt-2 mb-2 sm:mb-4 cursor-pointer hover:underline decoration-2 underline-offset-4"
+            className="text-2xl sm:text-5xl font-bold text-white mt-1 sm:mt-2 mb-2 sm:mb-4 cursor-pointer  decoration-2 underline-offset-4"
             onClick={onEditDetails}
           >
             {name}

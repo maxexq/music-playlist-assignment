@@ -72,7 +72,12 @@ export default function Home() {
       queryClient.invalidateQueries({ queryKey: ["playlists"] });
       toast.success("Song added to playlist");
     },
-    onError: () => toast.error("Failed to add song"),
+    onError: (error: Error) =>
+      toast.error(
+        error.message === "ALREADY_EXISTS"
+          ? "Already in your playlist"
+          : "Failed to add song",
+      ),
   });
 
   const addSongToOtherPlaylistMutation = useMutation({
@@ -89,7 +94,14 @@ export default function Home() {
       const playlistName = playlistsData.find((p) => p.id === playlistId)?.name;
       toast.success(`Added to ${playlistName ?? "playlist"}`);
     },
-    onError: () => toast.error("Failed to add song"),
+    onError: (error: Error, { playlistId }) => {
+      const playlistName = playlistsData.find((p) => p.id === playlistId)?.name;
+      toast.error(
+        error.message === "ALREADY_EXISTS"
+          ? `Already in ${playlistName ?? "playlist"}`
+          : "Failed to add song",
+      );
+    },
   });
 
   const removeSongMutation = useMutation({

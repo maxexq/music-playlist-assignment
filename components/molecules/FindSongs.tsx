@@ -106,11 +106,9 @@ const FindSongs = (props: FindSongsProps) => {
                 </div>
               </div>
 
-              <div className="flex-1 min-w-0 px-4 hidden md:block">
+              <div className="flex-1 text-[#b3b3b3] min-w-0 px-4 hidden md:block overflow-hidden">
                 {song.album && (
-                  <span className="text-sm text-[#b3b3b3] truncate">
-                    {song.album}
-                  </span>
+                  <span className="text-sm  truncate">{song.album}</span>
                 )}
               </div>
 

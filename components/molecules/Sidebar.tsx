@@ -30,7 +30,7 @@ export function Sidebar(props: SidebarProps) {
   const menuItems: MenuItems[] = [
     {
       title: "Playlist",
-      description: "Create a playlist with songs or episodes",
+      description: "Create a playlist with songs",
       icon: Music,
       callback: onCreatePlaylist,
     },

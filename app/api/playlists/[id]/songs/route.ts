@@ -8,11 +8,16 @@ export async function POST(
   const { id: playlistId } = await params;
   const { songId } = await request.json();
 
+  const existing = await prisma.playlistSong.findUnique({
+    where: { playlistId_songId: { playlistId, songId } },
+  });
+
+  if (existing) {
+    return NextResponse.json({ error: "already_exists" }, { status: 409 });
+  }
+
   const playlistSong = await prisma.playlistSong.create({
-    data: {
-      playlistId,
-      songId,
-    },
+    data: { playlistId, songId },
   });
 
   return NextResponse.json(playlistSong);

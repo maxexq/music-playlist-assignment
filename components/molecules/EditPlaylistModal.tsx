@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Lock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,10 +32,16 @@ function EditPlaylistForm(props: EditPlaylistFormProps) {
   const [editDescription, setEditDescription] = useState(description);
   const [editIsPublic, setEditIsPublic] = useState(isPublic);
 
+  const inputNamRef = useRef<HTMLInputElement>(null);
+
   const handleSave = () => {
     onSave(editName, editDescription, editIsPublic);
     onClose();
   };
+
+  useEffect(() => {
+    inputNamRef.current?.focus();
+  }, []);
 
   return (
     <>
@@ -64,6 +70,7 @@ function EditPlaylistForm(props: EditPlaylistFormProps) {
           <div>
             <label className="text-xs text-[#b3b3b3] mb-1 block">Name</label>
             <Input
+              ref={inputNamRef}
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               className="bg-[#3e3e3e] border-none text-white text-sm placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white h-10"

@@ -30,7 +30,7 @@ const SidebarHeader = (props: SidebarHeaderProps) => {
     <div className="shadow-xl">
       <header className="p-4 pb-2">
         <div className="flex items-center gap-2 justify-between">
-          <h1 className="text-base font-bold text-white">Your Library</h1>
+          <h1 className="text-base font-bold text-white">Your Playlist</h1>
           <div className="flex items-center gap-2">
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
               <Tooltip>
