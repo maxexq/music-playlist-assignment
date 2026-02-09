@@ -10,4 +10,5 @@
  */
 export type * from './models/Song'
 export type * from './models/Playlist'
+export type * from './models/PlaylistSong'
 export type * from './commonInputTypes'

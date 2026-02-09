@@ -11,19 +11,21 @@ export interface ImageProps {
 }
 
 const CoverImage = (props: ImageProps) => {
-  const { src, alt, width, height, index, priority = false } = props;
+  const { src, alt, width, index, priority = false } = props;
 
   return (
-    <Image
-      key={`image-${index}`}
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      loading={priority ? "eager" : "lazy"}
-      priority={priority && index === 0}
-      className="w-full h-full object-cover"
-    />
+    <div className="relative w-full h-full overflow-hidden">
+      <Image
+        key={`image-${index}`}
+        src={src}
+        alt={alt}
+        fill
+        sizes={`${width * 2}px`}
+        loading={priority ? "eager" : "lazy"}
+        priority={priority && index === 0}
+        className="object-cover"
+      />
+    </div>
   );
 };
 

@@ -30,24 +30,24 @@ const SidebarHeader = (props: SidebarHeaderProps) => {
     <div className="shadow-xl">
       <header className="p-4 pb-2">
         <div className="flex items-center gap-2 justify-between">
-          <h1 className="text-base font-bold text-white">Your Library</h1>
+          <h1 className="text-base font-bold text-white">Your Playlist</h1>
           <div className="flex items-center gap-2">
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-              <DropdownMenuTrigger>
-                <Tooltip>
-                  <TooltipTrigger asChild>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
                     <Button className="w-max min-w-9 bg-[#282828] rounded-full p-2 lg:py-2 lg:px-4">
                       <Plus
                         className={`transition-transform duration-200 ${isOpen ? "rotate-45" : ""}`}
                       />
                       <span className="hidden lg:inline">Create</span>
                     </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <p>Create a playlist</p>
-                  </TooltipContent>
-                </Tooltip>
-              </DropdownMenuTrigger>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Create a playlist</p>
+                </TooltipContent>
+              </Tooltip>
               <DropdownMenuContent
                 align="start"
                 className="bg-[#282828] border-none p-1"

@@ -10,17 +10,18 @@ interface PlaylistCoverProps {
   priority?: boolean;
 }
 
-const DefaultCell = () => (
-  <div className="w-full h-full bg-[#282828] flex items-center justify-center">
-    <Music size={48} className="text-[#b3b3b3]" />
-  </div>
-);
-
 const PlaylistCover = (props: PlaylistCoverProps) => {
   const { images = [], size = 232, className = "", priority = false } = props;
 
   const count = images.length;
   const gridSize = Math.ceil(size / 2);
+  const iconSize = Math.max(16, Math.round(size * 0.25));
+
+  const DefaultCell = () => (
+    <div className="w-full h-full bg-[#282828] flex items-center justify-center">
+      <Music size={iconSize} className="text-[#b3b3b3]" />
+    </div>
+  );
 
   const renderContent = () => {
     switch (true) {

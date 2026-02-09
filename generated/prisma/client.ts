@@ -49,3 +49,8 @@ export type Song = Prisma.SongModel
  * 
  */
 export type Playlist = Prisma.PlaylistModel
+/**
+ * Model PlaylistSong
+ * 
+ */
+export type PlaylistSong = Prisma.PlaylistSongModel

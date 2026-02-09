@@ -1,102 +1,134 @@
-export interface Song {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  duration: number;
-  coverUrl: string;
-}
+import { prisma } from "@/lib/prisma";
 
-// Mock data
-export const songs: Song[] = [
+const songsData = [
   {
-    id: "1",
     title: "Blinding Lights",
     artist: "The Weeknd",
     album: "After Hours",
-    duration: 200,
+    durationMs: 200040,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
   },
   {
-    id: "2",
     title: "Shape of You",
     artist: "Ed Sheeran",
     album: "÷ (Divide)",
-    duration: 233,
+    durationMs: 233713,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96",
   },
   {
-    id: "3",
     title: "Dance Monkey",
     artist: "Tones and I",
     album: "The Kids Are Coming",
-    duration: 209,
+    durationMs: 209438,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b2732e02117d76426a08ac7c174f",
   },
   {
-    id: "4",
     title: "Someone You Loved",
     artist: "Lewis Capaldi",
     album: "Divinely Uninspired to a Hellish Extent",
-    duration: 182,
+    durationMs: 182161,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b273fc2101e6889d6ce9025f85f2",
   },
   {
-    id: "5",
     title: "Watermelon Sugar",
     artist: "Harry Styles",
     album: "Fine Line",
-    duration: 174,
+    durationMs: 174000,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b27377fdcfda6535601aff081b6a",
   },
   {
-    id: "6",
     title: "Bad Guy",
     artist: "Billie Eilish",
     album: "When We All Fall Asleep, Where Do We Go?",
-    duration: 194,
+    durationMs: 194088,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b27350a3147b4edd7701a876c6ce",
   },
   {
-    id: "7",
     title: "Uptown Funk",
     artist: "Mark Ronson ft. Bruno Mars",
     album: "Uptown Special",
-    duration: 269,
+    durationMs: 269667,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b2737b1b6f41c1645af9757d5616",
   },
   {
-    id: "8",
     title: "Levitating",
     artist: "Dua Lipa",
     album: "Future Nostalgia",
-    duration: 203,
+    durationMs: 203064,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b273bd26ede1ae69327010d49946",
   },
   {
-    id: "9",
     title: "Stay",
     artist: "The Kid LAROI & Justin Bieber",
     album: "F*CK LOVE 3: OVER YOU",
-    duration: 141,
+    durationMs: 141806,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b2738e6551a2944764bc8e33a960",
   },
   {
-    id: "10",
     title: "As It Was",
     artist: "Harry Styles",
     album: "Harry's House",
-    duration: 167,
+    durationMs: 167303,
     coverUrl:
       "https://i.scdn.co/image/ab67616d0000b2732e8ed79e177ff6011076f5f0",
   },
 ];
+
+async function main() {
+  await prisma.playlistSong.deleteMany();
+  await prisma.playlist.deleteMany();
+  await prisma.song.deleteMany();
+
+  const songs = await Promise.all(
+    songsData.map((data) => prisma.song.create({ data })),
+  );
+
+  await prisma.playlist.create({
+    data: {
+      name: "Top Hits",
+      isPublic: true,
+      songs: {
+        create: songs.slice(0, 5).map((s) => ({ songId: s.id })),
+      },
+    },
+  });
+
+  await prisma.playlist.create({
+    data: {
+      name: "Chill Vibes",
+      isPublic: true,
+      songs: {
+        create: [songs[3], songs[4], songs[7], songs[9]].map((s) => ({
+          songId: s.id,
+        })),
+      },
+    },
+  });
+
+  await prisma.playlist.create({
+    data: {
+      name: "Party Mix",
+      isPublic: false,
+      songs: {
+        create: [songs[0], songs[2], songs[5], songs[6], songs[8]].map((s) => ({
+          songId: s.id,
+        })),
+      },
+    },
+  });
+
+  console.log("Seeded 10 songs and 3 playlists.");
+}
+
+main()
+  .catch((e) => console.error(e))
+  .finally(async () => await prisma.$disconnect());
