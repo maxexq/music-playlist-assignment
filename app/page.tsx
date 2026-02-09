@@ -1,175 +1,300 @@
 "use client";
 
 import { Sidebar } from "@/components/molecules/Sidebar";
-import { useState } from "react";
+import PlaylistHeader from "@/components/molecules/PlaylistHeader";
+import PlaylistTable from "@/components/molecules/PlaylistTable";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
-
-interface Playlist {
-  id: string;
-  name: string;
-  description: string;
-  songIds: string[];
-}
-
-export interface Song {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  duration: string;
-  coverUrl: string;
-}
-
-// Mock song data
-const playlists: Song[] = [
-  {
-    id: "1",
-    title: "Midnight Dreams",
-    artist: "Luna Park",
-    album: "Nocturnal Vibes",
-    duration: "3:45",
-    coverUrl:
-      "https://images.unsplash.com/photo-1629923759854-156b88c433aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtdXNpYyUyMGFsYnVtJTIwY292ZXIlMjBhcnR8ZW58MXx8fHwxNzcwNDYwODQ3fDA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "2",
-    title: "Electric Soul",
-    artist: "The Wavelengths",
-    album: "Frequency",
-    duration: "4:12",
-    coverUrl:
-      "https://images.unsplash.com/photo-1740459057005-65f000db582f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25jZXJ0JTIwc3RhZ2UlMjBsaWdodHN8ZW58MXx8fHwxNzcwNDg4OTU5fDA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "3",
-    title: "Vinyl Memories",
-    artist: "Retro Revival",
-    album: "Analog Days",
-    duration: "3:28",
-    coverUrl:
-      "https://images.unsplash.com/photo-1701374929875-37125c54cb29?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aW55bCUyMHJlY29yZCUyMHR1cm50YWJsZXxlbnwxfHx8fDE3NzA1NjE0MjF8MA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "4",
-    title: "Soundwave Paradise",
-    artist: "Audio Atlas",
-    album: "Headphone Heaven",
-    duration: "5:03",
-    coverUrl:
-      "https://images.unsplash.com/photo-1649956736509-f359d191bbcb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoZWFkcGhvbmVzJTIwbXVzaWN8ZW58MXx8fHwxNzcwNTYxNDg2fDA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "5",
-    title: "String Theory",
-    artist: "Marcus Cole",
-    album: "Acoustic Sessions",
-    duration: "4:31",
-    coverUrl:
-      "https://images.unsplash.com/photo-1638883296886-6095d6c869d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxndWl0YXIlMjBtdXNpY2lhbnxlbnwxfHx8fDE3NzA1NjE0ODd8MA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "6",
-    title: "Neon Lights",
-    artist: "Synthwave City",
-    album: "Future Nostalgia",
-    duration: "3:56",
-    coverUrl:
-      "https://images.unsplash.com/photo-1629923759854-156b88c433aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtdXNpYyUyMGFsYnVtJTIwY292ZXIlMjBhcnR8ZW58MXx8fHwxNzcwNDYwODQ3fDA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "7",
-    title: "Rhythm & Blues",
-    artist: "Smooth Operators",
-    album: "Soulful Journey",
-    duration: "4:44",
-    coverUrl:
-      "https://images.unsplash.com/photo-1740459057005-65f000db582f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25jZXJ0JTIwc3RhZ2UlMjBsaWdodHN8ZW58MXx8fHwxNzcwNDg4OTU5fDA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "8",
-    title: "Jazz in the Night",
-    artist: "Midnight Quartet",
-    album: "Blue Notes",
-    duration: "6:15",
-    coverUrl:
-      "https://images.unsplash.com/photo-1701374929875-37125c54cb29?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aW55bCUyMHJlY29yZCUyMHR1cm50YWJsZXxlbnwxfHx8fDE3NzA1NjE0MjF8MA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "9",
-    title: "Digital Love",
-    artist: "Cyber Hearts",
-    album: "Electronic Dreams",
-    duration: "3:33",
-    coverUrl:
-      "https://images.unsplash.com/photo-1649956736509-f359d191bbcb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoZWFkcGhvbmVzJTIwbXVzaWN8ZW58MXx8fHwxNzcwNTYxNDg2fDA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-  {
-    id: "10",
-    title: "Acoustic Sunrise",
-    artist: "Morning Breeze",
-    album: "Natural Sounds",
-    duration: "4:07",
-    coverUrl:
-      "https://images.unsplash.com/photo-1638883296886-6095d6c869d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxndWl0YXIlMjBtdXNpY2lhbnxlbnwxfHx8fDE3NzA1NjE0ODd8MA&ixlib=rb-4.1.0&q=80&w=200",
-  },
-];
+import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { songs } from "@/const/mock";
 
 export default function Home() {
-  const [playlists, setPlaylists] = useState<Playlist[]>([
-    {
-      id: "favorites",
-      name: "My Favorites",
-      description: "My personal collection of favorite tracks",
-      songIds: ["1", "3", "5"],
-    },
-  ]);
+  const [currentPlaylistId, setCurrentPlaylistId] = useState<string | null>(
+    null,
+  );
+  const [currentPlayingSongId, setCurrentPlayingSongId] = useState<
+    string | null
+  >(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [likedSongIds, setLikedSongIds] = useState<string[]>([]);
+  const [likedPlaylistIds, setLikedPlaylistIds] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [queue, setQueue] = useState<string[]>([]);
 
-  const [currentPlaylistId, setCurrentPlaylistId] =
-    useState<string>("favorites");
-  const [showLibrary, setShowLibrary] = useState(false);
+  // const currentPlaylist = playlists.find((p) => p.id === currentPlaylistId);
 
-  const handleCreatePlaylist = () => {
-    // Calculate next playlist number
-    const playlistNumbers = playlists
-      .map((p) => {
-        const match = p.name.match(/^My Playlist #(\d+)$/);
-        return match ? parseInt(match[1]) : 0;
-      })
-      .filter((n) => n > 0);
+  // const filteredSongs = useMemo(() => {
+  //   if (!searchQuery) return playlistSongs;
+  //   const query = searchQuery.toLowerCase();
+  //   return playlistSongs.filter(
+  //     (song) =>
+  //       song.title.toLowerCase().includes(query) ||
+  //       song.artist.toLowerCase().includes(query) ||
+  //       song.album.toLowerCase().includes(query)
+  //   );
+  // }, [playlistSongs, searchQuery]);
 
-    const nextNumber =
-      playlistNumbers.length > 0 ? Math.max(...playlistNumbers) + 1 : 1;
-    const playlistName = `My Playlist #${nextNumber}`;
+  // const totalDuration = useMemo(() => {
+  //   const totalSeconds = playlistSongs.reduce((acc, song) => acc + song.duration, 0);
+  //   const hours = Math.floor(totalSeconds / 3600);
+  //   const mins = Math.floor((totalSeconds % 3600) / 60);
+  //   if (hours > 0) {
+  //     return `${hours} hr ${mins} min`;
+  //   }
+  //   return `${mins} min`;
+  // }, [playlistSongs]);
 
-    const newPlaylist: Playlist = {
-      id: `playlist-${Date.now()}`,
-      name: playlistName,
-      description: "",
-      songIds: [],
-    };
-    setPlaylists([...playlists, newPlaylist]);
-    setCurrentPlaylistId(newPlaylist.id);
-    setShowLibrary(false);
-    toast.success(`Playlist "${playlistName}" created!`);
+  // const coverImages = useMemo(() => {
+  //   return playlistSongs.slice(0, 4).map((song) => song.coverUrl);
+  // }, [playlistSongs]);
+
+  // Playlist Actions
+  // const handleCreatePlaylist = async () => {
+  //   const playlistNumbers = playlists
+  //     .map((p) => {
+  //       const match = p.name.match(/^My Playlist #(\d+)$/);
+  //       return match ? parseInt(match[1]) : 0;
+  //     })
+  //     .filter((n) => n > 0);
+
+  //   const nextNumber =
+  //     playlistNumbers.length > 0 ? Math.max(...playlistNumbers) + 1 : 1;
+  //   const playlistName = `My Playlist #${nextNumber}`;
+
+  //   const newPlaylist = await createPlaylist(playlistName);
+  //   if (newPlaylist) {
+  //     setCurrentPlaylistId(newPlaylist.id);
+  //     toast.success(`Playlist "${playlistName}" created!`);
+  //   }
+  // };
+
+  // const handlePlay = () => {
+  //   if (playlistSongs.length > 0) {
+  //     setCurrentPlayingSongId(playlistSongs[0].id);
+  //     setIsPlaying(true);
+  //     toast.success(`Playing ${currentPlaylist?.name}`);
+  //   }
+  // };
+
+  // const handleShuffle = () => {
+  //   if (playlistSongs.length > 0) {
+  //     const randomIndex = Math.floor(Math.random() * playlistSongs.length);
+  //     setCurrentPlayingSongId(playlistSongs[randomIndex].id);
+  //     setIsPlaying(true);
+  //     toast.success("Shuffle enabled");
+  //   }
+  // };
+
+  // const handleLikePlaylist = () => {
+  //   if (!currentPlaylistId) return;
+  //   if (likedPlaylistIds.includes(currentPlaylistId)) {
+  //     setLikedPlaylistIds(likedPlaylistIds.filter((id) => id !== currentPlaylistId));
+  //     toast.success("Removed from Your Library");
+  //   } else {
+  //     setLikedPlaylistIds([...likedPlaylistIds, currentPlaylistId]);
+  //     toast.success("Added to Your Library");
+  //   }
+  // };
+
+  // const handleAddPlaylistToQueue = () => {
+  //   if (currentPlaylist) {
+  //     setQueue([...queue, ...currentPlaylist.songIds]);
+  //     toast.success(`Added ${currentPlaylist.name} to queue`);
+  //   }
+  // };
+
+  const handleDownload = () => {
+    toast.success("Download started");
   };
+
+  const handleShare = () => {
+    toast.success("Link copied to clipboard");
+  };
+
+  const handleEditPlaylist = () => {
+    toast.info("Edit playlist dialog would open here");
+  };
+
+  // const handleDeletePlaylist = async () => {
+  //   if (!currentPlaylistId) return;
+  //   const playlistName = currentPlaylist?.name;
+  //   const success = await deletePlaylist(currentPlaylistId);
+  //   if (success) {
+  //     setCurrentPlaylistId(null);
+  //     toast.success(`Deleted "${playlistName}"`);
+  //   }
+  // };
+
+  const handleToggleSearch = () => {
+    setShowSearch(!showSearch);
+    if (showSearch) {
+      setSearchQuery("");
+    }
+  };
+
+  // Song Actions
+  // const handlePlaySong = (songId: string) => {
+  //   setCurrentPlayingSongId(songId);
+  //   setIsPlaying(true);
+  //   const song = songs.find((s) => s.id === songId);
+  //   if (song) {
+  //     toast.success(`Now playing: ${song.title}`);
+  //   }
+  // };
+
+  const handlePauseSong = () => {
+    setIsPlaying(false);
+  };
+
+  const handleLikeSong = (songId: string) => {
+    setLikedSongIds([...likedSongIds, songId]);
+    toast.success("Added to Liked Songs");
+  };
+
+  const handleUnlikeSong = (songId: string) => {
+    setLikedSongIds(likedSongIds.filter((id) => id !== songId));
+    toast.success("Removed from Liked Songs");
+  };
+
+  const handleAddSongToQueue = (songId: string) => {
+    setQueue([...queue, songId]);
+    const song = songs.find((s) => s.id === songId);
+    toast.success(`Added "${song?.title}" to queue`);
+  };
+
+  // const handleAddToPlaylist = async (songId: string, playlistId: string) => {
+  //   const playlist = playlists.find((p) => p.id === playlistId);
+  //   if (playlist && !playlist.songIds.includes(songId)) {
+  //     await updatePlaylist(playlistId, {
+  //       songIds: [...playlist.songIds, songId],
+  //     });
+  //     const song = songs.find((s) => s.id === songId);
+  //     toast.success(`Added "${song?.title}" to ${playlist.name}`);
+  //   } else {
+  //     toast.error("Song already in playlist");
+  //   }
+  // };
+
+  // const handleRemoveFromPlaylist = async (songId: string) => {
+  //   if (!currentPlaylist) return;
+  //   await updatePlaylist(currentPlaylist.id, {
+  //     songIds: currentPlaylist.songIds.filter((id) => id !== songId),
+  //   });
+  //   const song = songs.find((s) => s.id === songId);
+  //   toast.success(`Removed "${song?.title}" from playlist`);
+  // };
+
+  const handleGoToArtist = (artist: string) => {
+    toast.info(`Navigate to artist: ${artist}`);
+  };
+
+  const handleGoToAlbum = (album: string) => {
+    toast.info(`Navigate to album: ${album}`);
+  };
+
+  const handleStartRadio = (songId: string) => {
+    const song = songs.find((s) => s.id === songId);
+    toast.success(`Starting radio based on "${song?.title}"`);
+  };
+
+  const handleShareSong = (songId: string) => {
+    toast.success("Song link copied to clipboard");
+  };
+
+  const currentPlaylist = false;
 
   return (
     <div className="flex h-screen bg-black">
       <Sidebar
-        playlists={playlists.map((p) => ({
-          id: p.id,
-          name: p.name,
-          songCount: p.songIds.length,
-        }))}
+        playlists={[]}
         currentPlaylistId={currentPlaylistId}
-        onSelectPlaylist={(id) => {
-          setCurrentPlaylistId(id);
-          setShowLibrary(false);
-        }}
-        onCreatePlaylist={handleCreatePlaylist}
-        onShowLibrary={() => setShowLibrary(true)}
-        showingLibrary={showLibrary}
+        onSelectPlaylist={setCurrentPlaylistId}
+        onCreatePlaylist={() => {}}
+        loading={false}
       />
+
+      <main className="flex-1 overflow-y-auto bg-gradient-to-b from-[#535353] to-[#121212]">
+        {currentPlaylist ? (
+          <>
+            <PlaylistHeader
+              name={currentPlaylist.name}
+              description={currentPlaylist.description}
+              coverImages={coverImages}
+              songCount={playlistSongs.length}
+              totalDuration={totalDuration}
+              isLiked={likedPlaylistIds.includes(currentPlaylist.id)}
+              onPlay={handlePlay}
+              onShuffle={handleShuffle}
+              onLike={handleLikePlaylist}
+              // onAddToQueue={handleAddPlaylistToQueue}
+              onDownload={handleDownload}
+              onShare={handleShare}
+              onEdit={handleEditPlaylist}
+              // onDelete={handleDeletePlaylist}
+              onSearch={handleToggleSearch}
+              showSearch={showSearch}
+            />
+
+            {/* Search Bar */}
+            {showSearch && (
+              <div className="px-6 mb-4">
+                <div className="relative max-w-xs">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#b3b3b3]" />
+                  <Input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search in playlist"
+                    className="pl-10 pr-10 bg-[#ffffff1a] border-none text-white placeholder:text-[#b3b3b3] focus-visible:ring-1 focus-visible:ring-white"
+                  />
+                  {searchQuery && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 size-6 hover:bg-transparent text-[#b3b3b3] hover:text-white"
+                      onClick={() => setSearchQuery("")}
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <PlaylistTable
+              songs={filteredSongs}
+              playlists={playlists.map((p) => ({ id: p.id, name: p.name }))}
+              currentPlayingSongId={currentPlayingSongId}
+              isPlaying={isPlaying}
+              likedSongIds={likedSongIds}
+              // onPlaySong={handlePlaySong}
+              onPauseSong={handlePauseSong}
+              onLikeSong={handleLikeSong}
+              onUnlikeSong={handleUnlikeSong}
+              onAddToQueue={handleAddSongToQueue}
+              // onAddToPlaylist={handleAddToPlaylist}
+              // onRemoveFromPlaylist={handleRemoveFromPlaylist}
+              onGoToArtist={handleGoToArtist}
+              onGoToAlbum={handleGoToAlbum}
+              onStartRadio={handleStartRadio}
+              onShare={handleShareSong}
+            />
+          </>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Select a playlist
+              </h2>
+              <p className="text-[#b3b3b3]">
+                Choose a playlist from the sidebar to view its contents
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
