@@ -107,7 +107,11 @@ export default function Home() {
         playlists={sidebarPlaylists}
         currentPlaylistId={currentPlaylistId}
         onSelectPlaylist={setCurrentPlaylistId}
-        onCreatePlaylist={() => createPlaylistMutation.mutate("New Playlist")}
+        onCreatePlaylist={() =>
+          createPlaylistMutation.mutate(
+            `My Playlist #${playlistsData.length + 1}`,
+          )
+        }
         loading={loadingPlaylists}
       />
 

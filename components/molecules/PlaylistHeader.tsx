@@ -69,9 +69,7 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
         />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-white uppercase">Playlist</p>
-          <h1 className="text-5xl font-bold text-white mt-2 mb-4 truncate">
-            {name}
-          </h1>
+          <h1 className="text-5xl font-bold text-white mt-2 mb-4">{name}</h1>
           {description && (
             <p className="text-sm text-[#b3b3b3] mb-2 line-clamp-2">
               {description}
