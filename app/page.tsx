@@ -3,6 +3,7 @@
 import { Sidebar } from "@/components/molecules/Sidebar";
 import PlaylistHeader from "@/components/molecules/PlaylistHeader";
 import PlaylistTable from "@/components/molecules/PlaylistTable";
+import FindSongs from "@/components/molecules/FindSongs";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
@@ -14,6 +15,7 @@ export default function Home() {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [showFindSongs, setShowFindSongs] = useState(false);
 
   const handleToggleSearch = () => {
     setShowSearch(!showSearch);
@@ -101,6 +103,25 @@ export default function Home() {
               onStartRadio={handleStartRadio}
               onShare={handleShareSong}
             />*/}
+
+            {/* Find more button / Find Songs section */}
+            {showFindSongs ? (
+              <FindSongs
+                onClose={() => setShowFindSongs(false)}
+                onAddSong={(songId) => {
+                  console.log("Add song:", songId);
+                }}
+              />
+            ) : (
+              <div className="px-6 py-6">
+                <button
+                  className="text-sm font-bold text-[#b3b3b3] hover:text-white transition-colors cursor-pointer"
+                  onClick={() => setShowFindSongs(true)}
+                >
+                  Find more
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <div className="flex items-center justify-center h-full">
