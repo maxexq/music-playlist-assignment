@@ -1,0 +1,28 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider   = "prisma-client"
+  output     = "../generated/prisma"
+  engineType = "client"
+}
+
+model Song {
+  id          Int        @id @default(autoincrement())
+  title       String
+  artist      String
+  album       String?
+  durationMs  Int
+  playlists   Playlist[]
+
+  @@index([title])
+}
+
+model Playlist {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  songs     Song[]
+  isPublic  Boolean  @default(true)
+}
