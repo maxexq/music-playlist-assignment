@@ -76,7 +76,8 @@ export const SongScalarFieldEnum = {
   title: 'title',
   artist: 'artist',
   album: 'album',
-  durationMs: 'durationMs'
+  durationMs: 'durationMs',
+  coverUrl: 'coverUrl'
 } as const
 
 export type SongScalarFieldEnum = (typeof SongScalarFieldEnum)[keyof typeof SongScalarFieldEnum]
